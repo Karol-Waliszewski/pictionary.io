@@ -1,0 +1,19 @@
+{
+  "name": "puns.io-server",
+  "version": "0.0.1",
+  "description": "Server for self-made puns game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "puns"
+  ],
+  "author": "Karol Waliszewski",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
+  }
+}
