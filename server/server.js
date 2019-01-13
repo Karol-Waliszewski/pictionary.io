@@ -11,6 +11,14 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
+app.get("/rooms", (req, res) => {
+  let rooms = [];
+  for(let room in ROOMS){
+    rooms.push(Object.assign(ROOMS[room],{id:room}));
+  }
+  res.json(rooms);
+});
+
 io.on("connection", socket => {
   // Connect
   console.log(`User connected: ${socket.id}`);
