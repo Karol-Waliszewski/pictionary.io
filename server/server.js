@@ -11,14 +11,6 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
-app.get("/rooms", (req, res) => {
-  let rooms = [];
-  for(let room in ROOMS){
-    rooms.push(Object.assign(ROOMS[room],{id:room}));
-  }
-  res.json(rooms);
-});
-
 io.on("connection", socket => {
   // Connect
   console.log(`User connected: ${socket.id}`);
@@ -38,7 +30,7 @@ io.on("connection", socket => {
 
   // Creating the room
   socket.on("create_room", options => {
-    if (typeof options.name != "undefined" || options.name.length <= 0) {
+    if (typeof options.name != "undefined" && options.name.length >= 0) {
       let roomID = createID();
 
       let room = {
@@ -54,6 +46,7 @@ io.on("connection", socket => {
       socket.join(roomID);
       socket.currentRoom = roomID;
       ROOMS[roomID].users.push(socket.id);
+      socket.emit("joined_room");
     } else {
       let msg = "You have to set a name!";
       socket.emit("create_room_error", msg);
@@ -76,6 +69,7 @@ io.on("connection", socket => {
           socket.join(data.id);
           socket.currentRoom = data.id;
           room.users.push(socket.id);
+          socket.emit("joined_room");
         } else {
           let msg = "Wrong password";
           socket.emit("join_room_error", msg);
@@ -84,6 +78,7 @@ io.on("connection", socket => {
         socket.join(data.id);
         socket.currentRoom = data.id;
         room.users.push(socket.id);
+        socket.emit("joined_room");
       }
     } else {
       let msg = "There is max amount of users.";
@@ -103,6 +98,25 @@ io.on("connection", socket => {
     } else {
       let msg = "You are not in this room.";
       socket.emit("leave_room_error", msg);
+    }
+  });
+
+  // Getting Rooms
+  socket.on("get_rooms", id => {
+    let rooms = [];
+    for (let room in ROOMS) {
+      rooms.push(Object.assign(ROOMS[room], { id: room }));
+    }
+    socket.emit("receive_rooms", rooms);
+  });
+
+  // Getting Users
+  socket.on("get_users", () => {
+    if (socket.currentRoom != null) {
+      socket.emit("receive_users", ROOMS[socket.currentRoom].users);
+    } else {
+      let msg = "You are in any room";
+      socket.emit("receive_users_error", msg);
     }
   });
 });

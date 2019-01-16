@@ -7,17 +7,30 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       component: Home
     },
     {
-      path: '/about',
-      name: 'about',
+      path: "/about",
+      name: "about",
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () =>
+        import(/* webpackChunkName: "about" */ "./views/About.vue")
+    },
+    {
+      path: "/rooms",
+      name: "rooms",
+      component: () =>
+        import("./views/Rooms.vue")
+    },
+    {
+      path: "/room/:id",
+      name: "room",
+      component: () =>
+        import("./views/Room.vue")
     }
   ]
-})
+});
