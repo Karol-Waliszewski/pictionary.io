@@ -15,7 +15,10 @@ export default {
   },
   methods: {
     joinRoom() {
-      this.$socket.emit("join_room", { id: this.$route.params.id });
+      this.$socket.emit("join_room", {
+        id: this.$route.params.id,
+        password: "test"
+      });
     },
     getUsers() {
       this.$socket.emit("get_users");
@@ -24,13 +27,13 @@ export default {
   sockets: {
     receive_users(users) {
       this.$data.users = users;
+      console.log(users);
     },
     receive_users_error(msg) {
       console.error(msg);
     },
-    joined_room() {
-      console.log("joined");
-      this.getUsers();
+    join_room_error(msg) {
+      console.error(msg);
     }
   },
   mounted() {

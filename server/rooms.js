@@ -1,6 +1,13 @@
 const createID = require("uniqid");
+const observe = require("observe");
 
 var ROOMS = {};
+
+var observer = observe(ROOMS);
+
+observer.on("change", function() {
+  console.log(ROOMS);
+});
 
 const CREATE_ROOM = function(options) {
   if (typeof options.name == "undefined" || options.name.length == 0) {
@@ -18,11 +25,8 @@ const CREATE_ROOM = function(options) {
   };
 
   ROOMS[roomID] = room;
-  ROOMS.watch(roomID, function(id, oldval, newval) {
-    console.log(newval);
-  });
 
-  return true;
+  return roomID;
 };
 
 const GET_ROOMS = function() {
@@ -33,8 +37,12 @@ const GET_ROOMS = function() {
   return rooms;
 };
 
-const ADD_USER = function(id, password, socket) {
+const ADD_USER = function(id, socket, password) {
   let room = ROOMS[id];
+
+  if (typeof room == "undefined") {
+    return false;
+  }
 
   if (room.users.lenght == room.maxUsers) {
     return false;
@@ -42,21 +50,18 @@ const ADD_USER = function(id, password, socket) {
 
   if (room.isPrivate) {
     if (room.password != password) {
-      socket.emit("join_room_error", "Wrong password");
       return false;
     }
   }
 
-  socket.join(id);
-  socket.currentRoom = id;
   ROOMS[id].users.push(socket);
 
   return true;
 };
 
 const REMOVE_USER = function(id, user) {
-  if (ROOMS[id].includes(user.id)) {
-    ROOMS[id].users.splice(ROOMS[id].indexOf(user.id), 1);
+  if (ROOMS[id].includes(user)) {
+    ROOMS[id].users.splice(ROOMS[id].indexOf(user), 1);
     if (ROOMS[id].users.lenght == 0) {
       delete ROOMS[id];
     }
@@ -64,4 +69,11 @@ const REMOVE_USER = function(id, user) {
   }
 
   return false;
+};
+
+module.exports = {
+  createRoom: CREATE_ROOM,
+  getRooms: GET_ROOMS,
+  addUser: ADD_USER,
+  removeUser: REMOVE_USER
 };

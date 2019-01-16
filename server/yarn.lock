@@ -315,6 +315,12 @@ object-component@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/object-component/-/object-component-0.0.3.tgz#f0c69aa50efc95b866c186f400a33769cb2f1291"
 
+observe@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/observe/-/observe-1.4.1.tgz#9839b9c5076f5a51e7b646197d4770ad2066e6fe"
+  dependencies:
+    proto "*"
+
 on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"
@@ -340,6 +346,10 @@ parseurl@~1.3.2:
 path-to-regexp@0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-0.1.7.tgz#df604178005f522f15eb4490e7247a1bfaa67f8c"
+
+proto@*:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/proto/-/proto-1.0.19.tgz#4dba250b34398ae242de24153e7bf9dab2fe4385"
 
 proxy-addr@~2.0.4:
   version "2.0.4"

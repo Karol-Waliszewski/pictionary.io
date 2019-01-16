@@ -2,13 +2,33 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Homepage</router-link>|
-      <router-link to="/about">About Page</router-link> |
-      <router-link to="/rooms">Rooms Page </router-link>
+      <router-link to="/about">About Page</router-link>|
+      <router-link to="/rooms">Rooms Page</router-link>
     </div>
     <router-view/>
   </div>
 </template>
-
+<script>
+export default {
+  name: "App",
+  data() {
+    return { users: [] };
+  },
+  methods: {
+    leaveRoom() {
+      this.$socket.emit("leave_room");
+    }
+  },
+  watch: {
+    $route(to, from) {
+      console.log(from)
+      if (from.name == "room") {
+        this.leaveRoom();
+      }
+    }
+  }
+};
+</script>
 <style>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
