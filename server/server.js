@@ -8,13 +8,13 @@ const createID = require("uniqid");
 
 var ROOMS = {};
 
-var getRooms = function(){
+var getRooms = function() {
   let rooms = [];
   for (let room in ROOMS) {
     rooms.push(Object.assign(ROOMS[room], { id: room }));
   }
   return rooms;
-}
+};
 
 var observer = observe(ROOMS);
 
@@ -32,6 +32,13 @@ io.on("connection", socket => {
 
   // Disconnect
   socket.on("disconnect", () => {
+    if (socket.currentRoom != null) {
+      ROOMS[socket.currentRoom].users.splice(
+        ROOMS[socket.currentRoom].users.indexOf(socket.id),
+        1
+      );
+      io.to(socket.currentRoom).emit("receive_users", ROOMS[socket.currentRoom].users);
+    }
     console.log(`User disconnected: ${socket.id}`);
   });
 
@@ -62,7 +69,7 @@ io.on("connection", socket => {
       socket.currentRoom = roomID;
       //ROOMS[roomID].users.push(socket.id);
       io.emit("receive_rooms", getRooms());
-      socket.emit("room_created",roomID);
+      socket.emit("room_created", roomID);
     } else {
       let msg = "You have to set a name!";
       socket.emit("create_room_error", msg);
