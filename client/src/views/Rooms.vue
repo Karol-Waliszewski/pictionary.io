@@ -43,6 +43,7 @@ export default {
   },
   mounted() {
     this.getRooms();
+    console.log(this.$socket)
   }
 };
 </script>
