@@ -4,6 +4,9 @@ import router from "./router.js";
 import App from "./App.vue";
 import "./registerServiceWorker";
 
+// Bulma 
+import 'bulma/css/bulma.css';
+
 Vue.config.productionTip = false;
 
 // Vue + Socket.io

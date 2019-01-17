@@ -1,6 +1,7 @@
 <template>
   <div class="about">
     <h1>This is a room number: {{$route.params.id}}</h1>
+    <h2 v-if="room">{{room.name}}</h2>
     <ul>
       <li v-for="user in users" :key="user">{{user}}</li>
     </ul>
@@ -11,17 +12,26 @@
 export default {
   name: "About",
   data() {
-    return { users: [] };
+    return { users: [], room: null };
   },
   methods: {
     joinRoom() {
+      let password = this.room.isPrivate ? this.getPassword() : "";
+
       this.$socket.emit("join_room", {
         id: this.$route.params.id,
-        password: "test"
+        password
       });
     },
     getUsers() {
       this.$socket.emit("get_users");
+    },
+    getRoomInfo() {
+      this.$socket.emit("get_room", this.$route.params.id);
+    },
+    getPassword() {
+      // TODO password prompt
+      return "password";
     }
   },
   sockets: {
@@ -34,11 +44,15 @@ export default {
     },
     join_room_error(msg) {
       console.error(msg);
+    },
+    receive_room(room) {
+      this.$data.room = room;
+      console.log(room);
+      this.joinRoom();
     }
   },
   mounted() {
-    console.log("FIRED");
-    this.joinRoom();
+    this.getRoomInfo();
   }
 };
 </script>

@@ -2,25 +2,26 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
-const observe = require("observe");
+const observe = require("./observer.js");
+const test = require("./rooms");
 
 const createID = require("uniqid");
 
-var ROOMS = {};
+var ROOMS = observe({}, function() {
+  console.log("FIRED");
+});
 
 var getRooms = function() {
   let rooms = [];
   for (let room in ROOMS) {
-    rooms.push(Object.assign(ROOMS[room], { id: room }));
+    if (ROOMS[room].users.length == 0) {
+      delete ROOMS[room];
+    } else {
+      rooms.push(Object.assign(ROOMS[room], { id: room }));
+    }
   }
   return rooms;
 };
-
-var observer = observe(ROOMS);
-
-observer.on("change", function(change) {
-  console.log(ROOMS);
-});
 
 app.get("/", (req, res) => {
   res.send("Hello world");
@@ -37,7 +38,11 @@ io.on("connection", socket => {
         ROOMS[socket.currentRoom].users.indexOf(socket.id),
         1
       );
-      io.to(socket.currentRoom).emit("receive_users", ROOMS[socket.currentRoom].users);
+      io.to(socket.currentRoom).emit(
+        "receive_users",
+        ROOMS[socket.currentRoom].users
+      );
+      io.emit("receive_rooms", getRooms());
     }
     console.log(`User disconnected: ${socket.id}`);
   });
@@ -47,7 +52,7 @@ io.on("connection", socket => {
     console.log(`Hello: ${socket.id}, ${msg}`);
     io.emit("hello", msg);
 
-    console.log(ROOMS);
+    console.log(test.logUser());
   });
 
   // Creating the room
@@ -60,7 +65,7 @@ io.on("connection", socket => {
         isPrivate: options.isPrivate || false,
         password: options.password || "",
         maxUsers: options.maxUsers || 8,
-        users: []
+        users: [socket.id]
       };
 
       ROOMS[roomID] = room;
@@ -78,6 +83,11 @@ io.on("connection", socket => {
     console.log(ROOMS);
   });
 
+  // Get Room
+  socket.on("get_room", id => {
+    socket.emit("receive_room", ROOMS[id]);
+  });
+
   // Joining Room
   socket.on("join_room", data => {
     let room = ROOMS[data.id];
@@ -88,7 +98,7 @@ io.on("connection", socket => {
       return false;
     }
 
-    if (room.users.lenght == room.maxUsers) {
+    if (room.users.length == room.maxUsers) {
       let msg = "There is max amount of users.";
       socket.emit("join_room_error", msg);
       return false;
@@ -102,10 +112,14 @@ io.on("connection", socket => {
       }
     }
 
+    if (socket.currentRoom != null) {
+      socket.leave(socket.currentRoom);
+    }
+
     socket.join(data.id);
     socket.currentRoom = data.id;
     room.users.push(socket.id);
-
+    io.emit("receive_rooms", getRooms());
     io.to(room.id).emit("receive_users", ROOMS[room.id].users);
   });
 
@@ -117,19 +131,22 @@ io.on("connection", socket => {
       return false;
     }
 
-    if (ROOMS[id].users.includes(socket.id)) {
-      ROOMS[id].users.splice(ROOMS[id].users.indexOf(socket.id), 1);
-      socket.currentRoom = null;
-      socket.leave(id);
-      io.to(id).emit("receive_users", ROOMS[id].users);
-      if (ROOMS[id].users.length == 0) {
-        delete ROOMS[id];
-        io.emit("receive_rooms", getRooms());
-      }
-    } else {
+    if (!ROOMS[id].users.includes(socket.id)) {
       let msg = "You are not in this room.";
       socket.emit("leave_room_error", msg);
+      return false;
     }
+
+    ROOMS[id].users.splice(ROOMS[id].users.indexOf(socket.id), 1);
+    socket.currentRoom = null;
+    socket.leave(id);
+    io.to(id).emit("receive_users", ROOMS[id].users);
+
+    if (ROOMS[id].users.length == 0) {
+      delete ROOMS[id];
+    }
+
+    io.emit("receive_rooms", getRooms());
   });
 
   // Getting Rooms

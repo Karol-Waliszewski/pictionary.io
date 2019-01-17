@@ -71,9 +71,14 @@ const REMOVE_USER = function(id, user) {
   return false;
 };
 
+const LOG_USER = function(){
+  return 'this.id';
+}
+
 module.exports = {
   createRoom: CREATE_ROOM,
   getRooms: GET_ROOMS,
   addUser: ADD_USER,
-  removeUser: REMOVE_USER
+  removeUser: REMOVE_USER,
+  logUser: LOG_USER
 };
