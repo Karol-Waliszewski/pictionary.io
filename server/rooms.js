@@ -10,7 +10,11 @@ ROOMS.on("change", function(change) {
   io.to(ID).emit("receive_users", ROOMS.subject[ID].users);
 
   if (ROOMS.subject[ID].users.length == 0) {
-    delete ROOMS.subject[ID];
+    if ("created" in ROOMS.subject[ID]) {
+      delete ROOMS.subject[ID].created;
+    } else {
+      delete ROOMS.subject[ID];
+    }
   }
 });
 
@@ -21,6 +25,8 @@ const CREATE_ROOM = function(socket, options) {
     return false;
   }
 
+  LEAVE_ROOM(socket);
+
   let roomID = createID();
 
   let room = {
@@ -28,14 +34,21 @@ const CREATE_ROOM = function(socket, options) {
     isPrivate: options.isPrivate || false,
     password: options.password || "",
     maxUsers: options.maxUsers || 8,
-    users: [socket.id]
+    users: [socket.id],
+    created: true
   };
 
   ROOMS.set(roomID, room);
-
   socket.join(roomID);
   socket.emit("room_created", roomID);
-  socket.emit("receive_users", ROOMS.subject[roomID].users);
+
+  setTimeout(() => {
+    socket.emit("receive_users", room.users);
+  }, 100);
+
+  setTimeout(() => {
+    delete ROOMS.subject[roomID].created;
+  }, 150);
 
   return true;
 };
@@ -83,9 +96,7 @@ const JOIN_ROOM = function(socket, id, password) {
     return false;
   }
 
-  if (socket.currentRoom != null) {
-    LEAVE_ROOM(socket, socket.currentRoom);
-  }
+  LEAVE_ROOM(socket);
 
   socket.join(id);
 
@@ -116,8 +127,16 @@ const LEAVE_ROOM = function(socket) {
   return true;
 };
 
-const LOG_USER = function() {
-  return "user";
+const GET_SOCKET_ROOM = function(socket) {
+  for (let room of GET_ROOMS()) {
+    for (let user of room.users) {
+      if (user == socket.id) {
+        return room;
+      }
+    }
+  }
+
+  return false;
 };
 
 module.exports = {
@@ -126,5 +145,5 @@ module.exports = {
   getRoom: GET_ROOM,
   joinRoom: JOIN_ROOM,
   leaveRoom: LEAVE_ROOM,
-  logUser: LOG_USER
+  getSocketRoom: GET_SOCKET_ROOM
 };

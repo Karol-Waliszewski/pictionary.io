@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
-const test = require("./rooms");
+const ROOMS = require("./rooms");
+const CHAT = require("./chat");
 
 global.io = io;
 
@@ -16,7 +17,7 @@ io.on("connection", socket => {
 
   // Disconnect
   socket.on("disconnect", () => {
-    test.leaveRoom(socket);
+    ROOMS.leaveRoom(socket);
     console.log(`User disconnected: ${socket.id}`);
   });
 
@@ -25,34 +26,38 @@ io.on("connection", socket => {
     console.log(`Hello: ${socket.id}, ${msg}`);
     io.emit("hello", msg);
 
-    console.log(test.logUser());
+    console.log(ROOMS.logUser());
   });
 
   // Creating the room
   socket.on("create_room", options => {
-    test.createRoom(socket, options);
+    ROOMS.createRoom(socket, options);
   });
 
   // Get Room
   socket.on("get_room", id => {
-    socket.emit("receive_room", test.getRoom(id));
+    socket.emit("receive_room", ROOMS.getRoom(id));
   });
 
   // Joining Room
   socket.on("join_room", data => {
-    test.joinRoom(socket, data.id, data.password);
+    ROOMS.joinRoom(socket, data.id, data.password);
   });
 
   // Leaving Room
   socket.on("leave_room", () => {
-    test.leaveRoom(socket);
+    ROOMS.leaveRoom(socket);
   });
 
   // Getting Rooms
   socket.on("get_rooms", id => {
-    socket.emit("receive_rooms", test.getRooms());
+    socket.emit("receive_rooms", ROOMS.getRooms());
   });
 
+  socket.on("send_message", msg => {
+    let room = ROOMS.getSocketRoom(socket);
+    if (room) CHAT.sendMessage(room.id, { msg, sender: socket.id });
+  });
 });
 
 http.listen(5050, () => {
