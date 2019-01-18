@@ -20,7 +20,7 @@
             </ul>
           </div>
           <footer class="card-footer">
-            <router-link to="/rooms" class="card-footer-item has-text-danger">Leave Room</router-link>
+            <router-link to="/rooms" class="card-footer-item has-text-danger is-hoverable">Leave Room</router-link>
           </footer>
         </div>
       </div>
@@ -95,7 +95,8 @@ export default {
       // TODO password prompt
       return "password";
     },
-    sendMessage() {
+    sendMessage(e) {
+      e.preventDefault();
       if (this.$data.message.length != 0) {
         this.$socket.emit("send_message", this.$data.message);
         this.$data.message = "";

@@ -1,60 +1,23 @@
 <template>
   <div id="app">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="https://bulma.io">
-          <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-        </a>
-        
-        <a
-          role="button"
-          class="navbar-burger burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-
-      <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-          <router-link to="/" class="navbar-item">Homepage</router-link>
-          <router-link to="/rooms" class="navbar-item">Rooms</router-link>
-        </div>
-
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <button class="button is-primary" @click="createRoom">
-              <strong>Create a room</strong>
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <navigation/>
     <router-view/>
   </div>
 </template>
 <script>
+
+import Nav from "./components/Nav"
+
 export default {
   name: "App",
   data() {
     return { users: [] };
   },
+  components: {navigation : Nav},
   methods: {
     leaveRoom() {
       this.$socket.emit("leave_room");
-    },
-    createRoom() {
-      this.$socket.emit("create_room", {
-        name: "Testowy pokoj",
-        isPrivate: true,
-        password: "password",
-        maxUsers: 5
-      });
-    },
+    }
   },
   sockets:{
     room_created(id) {
@@ -72,15 +35,7 @@ export default {
 </script>
 <style>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin: 0;
-}
 
-.router-link-exact-active {
-  color: #42b983;
+  margin: 0;
 }
 </style>
