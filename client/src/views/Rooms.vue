@@ -33,7 +33,7 @@ export default {
   methods: {
     getRooms() {
       this.$socket.emit("get_rooms");
-    }
+    },
   },
   sockets: {
     receive_rooms(rooms) {

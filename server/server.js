@@ -41,7 +41,8 @@ io.on("connection", socket => {
 
   // Joining Room
   socket.on("join_room", data => {
-    ROOMS.joinRoom(socket, data.id, data.password);
+    if (ROOMS.joinRoom(socket, data.id, data.password))
+      CHAT.sendServerMessage(data.id, `${socket.id} has joined the game!`);
   });
 
   // Leaving Room

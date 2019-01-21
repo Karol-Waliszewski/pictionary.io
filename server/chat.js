@@ -7,11 +7,16 @@ const SEND_MESSAGE = function(roomID, messageObject) {
   );
 };
 
+const SEND_SERVER_MESSAGE = function(roomID, message) {
+  io.to(roomID).emit("receive_server_message", message);
+};
+
 const SEND_CALLBACK = function(socket, callbackObject) {
   socket.emit("receive_callback", callbackObject);
 };
 
 module.exports = {
   sendMessage: SEND_MESSAGE,
+  sendServerMessage: SEND_SERVER_MESSAGE,
   sendCallback: SEND_CALLBACK
 };

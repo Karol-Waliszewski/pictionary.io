@@ -20,7 +20,10 @@
             </ul>
           </div>
           <footer class="card-footer">
-            <router-link to="/rooms" class="card-footer-item has-text-danger is-hoverable">Leave Room</router-link>
+            <router-link
+              to="/rooms"
+              class="card-footer-item has-text-danger is-hoverable"
+            >Leave Room</router-link>
           </footer>
         </div>
       </div>
@@ -40,8 +43,14 @@
           <div class="chat-body">
             <ul class="chat-messages">
               <li v-for="message in messages" :key="message.id" class="chat-message">
-                <span class="has-text-weight-bold">{{message.sender}}:</span>
-                <span>{{message.msg}}</span>
+                <span
+                  class="has-text-weight-bold"
+                  v-if="message.sender !='server'"
+                >{{message.sender}}:</span>
+                <span v-if="message.sender =='server'">
+                  <strong>{{message.msg}}</strong>
+                </span>
+                <span v-else>{{message.msg}}</span>
               </li>
             </ul>
           </div>
@@ -73,8 +82,12 @@ export default {
     return { users: [], room: null, message: "", messages: [] };
   },
   methods: {
-    joinRoom() {
-      let password = this.room.isPrivate ? this.getPassword() : "";
+    async joinRoom() {
+      let password = "";
+
+      if (!this.room.users.includes(this.$socket.id) && this.room.isPrivate) {
+        password = await this.getPassword();
+      }
 
       this.$socket.emit("join_room", {
         id: this.$route.params.id,
@@ -91,9 +104,19 @@ export default {
     getRoomInfo() {
       this.$socket.emit("get_room", this.$route.params.id);
     },
-    getPassword() {
-      // TODO password prompt
-      return "password";
+    async getPassword() {
+      const { value: password } = await this.$swal({
+        title: "Enter your password",
+        input: "password",
+        showCancelButton: true,
+        inputPlaceholder: "Enter your password",
+        inputAttributes: {
+          autocapitalize: "off",
+          autocorrect: "off"
+        }
+      });
+
+      return password;
     },
     sendMessage(e) {
       e.preventDefault();
@@ -106,13 +129,13 @@ export default {
   sockets: {
     receive_users(users) {
       this.$data.users = users;
-      console.log(users);
     },
     receive_users_error(msg) {
-      console.error(msg);
+      this.$swal({ title: msg, type: "error" });
     },
     join_room_error(msg) {
-      console.error(msg);
+      this.$swal({ title: msg, type: "error" });
+      this.$router.push("/rooms");
     },
     receive_room(room) {
       this.$data.room = room;
@@ -121,6 +144,9 @@ export default {
     },
     receive_message(msgObj) {
       this.$data.messages.push(msgObj);
+    },
+    receive_server_message(msg) {
+      this.$data.messages.push({ sender: "server", msg });
     }
   },
   mounted() {

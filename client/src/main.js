@@ -1,11 +1,12 @@
 import Vue from "vue";
 import VueSocketIO from "vue-socket.io";
+import VueSweetAlert from "vue-sweetalert2";
 import router from "./router.js";
 import App from "./App.vue";
 import "./registerServiceWorker";
 
-// Bulma 
-import 'bulma/css/bulma.css';
+// Bulma
+import "bulma/css/bulma.css";
 
 Vue.config.productionTip = false;
 
@@ -17,6 +18,8 @@ Vue.use(
   })
 );
 
+// SweetAlert2
+Vue.use(VueSweetAlert);
 
 // Initializing
 new Vue({
