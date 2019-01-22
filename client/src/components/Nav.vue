@@ -26,7 +26,7 @@
 
       <div class="navbar-end">
         <div class="navbar-item">
-          <button class="button is-primary" @click="createRoom">
+          <button class="button is-primary" @click="openCreator">
             <strong>Create a room</strong>
           </button>
         </div>
@@ -39,33 +39,8 @@
 export default {
   name: "Nav",
   methods: {
-    async createRoom() {
-      const { value: formValues } = await this.$swal({
-        title: "Multiple inputs",
-        html:
-          '<form id="swal-form">' +
-          '<input id="name" name="name" class="swal2-input">' +
-          '<input id="password" name="password" class="swal2-input">' +
-          '<input type="number" id="maxUsers" name="maxUsers" class="swal2-input">' +
-          `<label class="checkbox"><input type="checkbox" id="isPrivate" name="isPrivate" value="true">isPrivate</label>` +
-          "</form>",
-        focusConfirm: false,
-        preConfirm: () => {
-          return Object.values(document.getElementById("swal-form")).reduce(
-            (obj, field) => {
-              obj[field.name] = field.value;
-              return obj;
-            },
-            {}
-          );
-        }
-      });
-console.log(formValues);
-      formValues.isPrivate = (formValues.isPrivate == "on") ? true : false;
-
-      console.log(formValues);
-
-      this.$socket.emit("create_room", formValues);
+    openCreator() {
+      this.$emit("openCreator");
     }
   }
 };

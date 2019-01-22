@@ -2,14 +2,14 @@
   <div class="container">
     <div class="columns is-multiline is-mobile">
       <div class="column is-full">
-        <h1 class="title is-2">This is a room number: {{$route.params.id}}</h1>
-        <h2 v-if="room" class="subtitle is-4">{{room.name}}</h2>
+        <h1 class="title is-2">{{room.name.toUpperCase()}}</h1>
+        <!-- <h2 v-if="room" class="subtitle is-4">{{room.name}}</h2> -->
       </div>
 
       <div class="column is-3">
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title">Players</p>
+            <p class="card-header-title">Players: {{users.length}}</p>
           </header>
           <div class="card-content">
             <ul class="content playerlist">

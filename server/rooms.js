@@ -5,8 +5,7 @@ var ROOMS = observe({});
 
 ROOMS.on("change", function(change) {
   let ID = change.property[0];
-
-  io.emit("receive_rooms", GET_ROOMS());
+  
   io.to(ID).emit("receive_users", ROOMS.subject[ID].users);
 
   if (ROOMS.subject[ID].users.length == 0) {
@@ -16,6 +15,8 @@ ROOMS.on("change", function(change) {
       delete ROOMS.subject[ID];
     }
   }
+
+  io.emit("receive_rooms", GET_ROOMS());
 });
 
 const CREATE_ROOM = function(socket, options) {
