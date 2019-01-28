@@ -2,7 +2,7 @@
   <div class="container">
     <div class="columns is-multiline is-mobile">
       <div class="column is-full">
-        <h1 class="title is-2">{{room.name.toUpperCase()}}</h1>
+        <h1 class="title is-2" v-if="room">{{room.name.toUpperCase()}}</h1>
         <!-- <h2 v-if="room" class="subtitle is-4">{{room.name}}</h2> -->
       </div>
 
@@ -28,12 +28,7 @@
         </div>
       </div>
 
-      <div class="column is-6">
-        <div class="card whiteboard-wrapper">
-          <canvas class="whiteboard" id="whiteboard"></canvas>
-          <footer class="card-footer whiteboard-footer">njgrngijn</footer>
-        </div>
-      </div>
+<whiteboard/>  
 
       <div class="column is-3" id="chat">
         <div class="card chat">
@@ -76,11 +71,15 @@
 </template>
 
 <script>
+
+import Whiteboard from "../components/WhiteBoard"
+
 export default {
   name: "About",
   data() {
     return { users: [], room: null, message: "", messages: [] };
   },
+  components:{Whiteboard},
   methods: {
     async joinRoom() {
       let password = "";
@@ -188,21 +187,4 @@ export default {
   word-break: break-all;
 }
 
-.whiteboard-wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.whiteboard {
-  width: 100%;
-  height: 100%;
-  background: palegoldenrod;
-}
-
-.whiteboard-footer {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-}
 </style>
