@@ -1,5 +1,6 @@
 const createID = require("uniqid");
 const observe = require("observe");
+const ROOM = require('./room');
 
 var ROOMS = observe({});
 
@@ -30,14 +31,16 @@ const CREATE_ROOM = function(socket, options) {
 
   let roomID = createID();
 
-  let room = {
+  let room = new ROOM( {
     name: options.name,
     isPrivate: options.isPrivate || false,
     password: options.password || "",
     maxUsers: options.maxUsers || 8,
     users: [socket.id],
     created: true
-  };
+  })
+room.setPainter()
+  console.log(room.painter)
 
   ROOMS.set(roomID, room);
   socket.join(roomID);

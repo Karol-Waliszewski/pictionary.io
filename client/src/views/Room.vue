@@ -28,7 +28,7 @@
         </div>
       </div>
 
-<whiteboard/>  
+      <whiteboard/>  
 
       <div class="column is-3" id="chat">
         <div class="card chat">

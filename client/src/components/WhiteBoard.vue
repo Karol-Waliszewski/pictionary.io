@@ -3,7 +3,6 @@
     <div class="card whiteboard-wrapper">
       <canvas class="whiteboard" ref="canvas" height="600" width="800" @mousemove="drawLine"></canvas>
       <footer class="card-footer whiteboard-footer">
-        
         <button class="button" @click="clearBoard">Clear</button>
       </footer>
     </div>
@@ -17,7 +16,14 @@ export default {
     return { prevPos: { x: null, y: null }, ctx: null, draw: false };
   },
   methods: {
-    clearBoard() {this.$data.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);},
+    clearBoard() {
+      this.$data.ctx.clearRect(
+        0,
+        0,
+        this.$refs.canvas.width,
+        this.$refs.canvas.height
+      );
+    },
     drawLine(e) {
       if (this.$data.draw) {
         let pos = this.getMousePosition(this.$refs.canvas, e);
@@ -51,16 +57,22 @@ export default {
         x: (evt.clientX - rect.left) * scaleX,
         y: (evt.clientY - rect.top) * scaleY
       };
+    },
+    addEvents() {
+      window.addEventListener("mousedown", this.enableDrawing);
+      window.addEventListener("mouseup", this.disableDrawing);
+    },
+    removeEvents() {
+      window.removeEventListener("mousedown", this.enableDrawing);
+      window.removeEventListener("mouseup", this.disableDrawing);
     }
   },
   mounted() {
     this.$data.ctx = this.$refs.canvas.getContext("2d");
-    window.addEventListener("mousedown", this.enableDrawing);
-    window.addEventListener("mouseup", this.disableDrawing);
+    this.addEvents();
   },
   destroyed() {
-    window.removeEventListener("mousedown", this.enableDrawing);
-    window.removeEventListener("mouseup", this.disableDrawing);
+    this.removeEvents();
   }
 };
 </script>
@@ -75,7 +87,7 @@ export default {
   width: 100%;
   max-height: 100%;
   flex: 1;
- // background: palegoldenrod;
+  // background: palegoldenrod;
 }
 
 .whiteboard-footer {
