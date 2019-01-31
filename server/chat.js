@@ -13,7 +13,7 @@ const SEND_SERVER_MESSAGE = function(roomID, message) {
 
 const SEND_CALLBACK = function (socket, callbackObject) {
   socket.emit("receive_callback", callbackObject.self);
-  socket.broadcast.emit("receive_server_message", callbackObject.self);
+  socket.broadcast.emit("receive_server_message", callbackObject.broadcast);
 };
 
 module.exports = {
