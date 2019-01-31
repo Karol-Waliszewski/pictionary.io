@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
 io.on("connection", socket => {
   // Connect
   console.log(`User connected: ${socket.id}`);
+  socket.name = socket.id;
 
   // Disconnect
   socket.on("disconnect", () => {
@@ -21,12 +22,9 @@ io.on("connection", socket => {
     console.log(`User disconnected: ${socket.id}`);
   });
 
-  // Hello
-  socket.on("hello", msg => {
-    console.log(`Hello: ${socket.id}, ${msg}`);
-    io.emit("hello", msg);
-
-    console.log(ROOMS.logUser());
+  // Set socket's name
+  socket.on("setName", name => {
+    socket.name = name;
   });
 
   // Creating the room
@@ -41,8 +39,13 @@ io.on("connection", socket => {
 
   // Joining Room
   socket.on("join_room", data => {
-    if (ROOMS.joinRoom(socket, data.id, data.password))
-      CHAT.sendServerMessage(data.id, `${socket.id} has joined the game!`);
+    if (ROOMS.joinRoom(socket, data.id, data.password)) {
+      CHAT.sendServerMessage(data.id, `${socket.name} has joined the game!`);
+      let room = ROOMS.getRoom(data.id);
+      if (room.round != null) {
+        socket.emit('getPainting', ROOMS.getRoom(data.id).round.lineHistory);
+      }
+    }
   });
 
   // Leaving Room
@@ -51,21 +54,55 @@ io.on("connection", socket => {
   });
 
   // Getting Rooms
-  socket.on("get_rooms", id => {
+  socket.on("get_rooms", () => {
     socket.emit("receive_rooms", ROOMS.getRooms());
   });
 
   socket.on("send_message", msg => {
     let room = ROOMS.getSocketRoom(socket);
-    if (room) CHAT.sendMessage(room.id, { msg, sender: socket.id });
+    if (room) {
+      CHAT.sendMessage(room.id, {
+        msg,
+        sender: socket.name
+      });
+
+      if (room.round != null) {
+
+        // Checking if the message is correct
+        if (room.round.check(msg)) {
+          room.stopRound();
+          ROOMS.givePoints(socket);
+          CHAT.sendCallback(socket, {
+            self: `Congratulations! You've guessed the word!`,
+            broadcast: `${socket.name} guessed the word and earned 1 point!`
+          });
+        }
+      }
+    }
   });
+
+  socket.on("paint", (coords) => {
+    let room = ROOMS.getSocketRoom(socket);
+    if (room.painter == socket.id && room.round != null) {
+      io.to(room.id).emit('paint', coords);
+      room.round.addLine(coords);
+    }
+  });
+
+  socket.on("clear", () => {
+    let room = ROOMS.getSocketRoom(socket);
+    if (room.painter == socket.id && room.round != null) {
+      room.clearBoard();
+    }
+  })
+
 });
 
 http.listen(5050, () => {
   console.log("Puns.io server is listening on port 5050");
 });
 
-process.on("exit", function(code) {
+process.on("exit", function (code) {
   http.close();
   console.log("Server exit", code);
 });

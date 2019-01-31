@@ -1,43 +1,56 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="@/assets/logo.png" @click="sayHello">
-    <HelloWorld :msg="test"/>
+    <section class="hero is-light is-fullheight">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <div class="column is-4 is-offset-4">
+            <h3 class="title has-text-grey">Hello!</h3>
+            <p class="subtitle has-text-grey">Choose your name to begin the game.</p>
+            <div class="box">
+              <form>
+                <div class="field">
+                  <div class="control">
+                    <input
+                      class="input is-large"
+                      type="text"
+                      placeholder="Choose your name..."
+                      autofocus
+                      v-model="name"
+                    >
+                  </div>
+                </div>
+                <button
+                  class="button is-block is-info is-fullwidth"
+                  :disabled="name.length <= 0"
+                  @click="chooseName"
+                >Start!</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
-import HelloWorld from "@/components/HelloWorld.vue";
-
 export default {
-  name: "app",
+  name: "homepage",
   data: () => {
     return {
-      test: "Vue Sandbox"
+      name: ""
     };
   },
-  components: {
-    HelloWorld
-  },
   methods: {
-    sayHello() {
-      this.$socket.emit("hello", "Hello World");
+    chooseName(e) {
+      e.preventDefault();
+      this.$socket.emit("setName", this.name);
+      this.$socket.name = this.name;
     }
   },
-  sockets: {
-    hello(data) {
-      this.test = data;
-    }
-  }
+
 };
 </script>
 
-<style lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss" scoped>
 </style>

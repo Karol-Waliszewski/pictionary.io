@@ -2,8 +2,8 @@
   <div class="container">
     <div class="columns is-multiline is-mobile">
       <div class="column is-full">
-        <h1 class="title is-2" v-if="room">{{room.name.toUpperCase()}}</h1>
-        <!-- <h2 v-if="room" class="subtitle is-4">{{room.name}}</h2> -->
+        <h1 class="title is-2 has-text-centered" v-if="room">{{room.name.toUpperCase()}}</h1>
+        <h2 v-if="room" class="subtitle is-4 has-text-centered">1:49</h2>
       </div>
 
       <div class="column is-3">
@@ -13,9 +13,9 @@
           </header>
           <div class="card-content">
             <ul class="content playerlist">
-              <li v-for="user in users" :key="user">
-                {{user}} :
-                <span class="has-text-weight-bold">5</span>
+              <li v-for="user in users" :key="user.id">
+                {{user.name}} :
+                <span class="has-text-weight-bold">{{user.points}}</span>
               </li>
             </ul>
           </div>
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <whiteboard/>  
+      <whiteboard/>
 
       <div class="column is-3" id="chat">
         <div class="card chat">
@@ -45,7 +45,7 @@
                 <span v-if="message.sender =='server'">
                   <strong>{{message.msg}}</strong>
                 </span>
-                <span v-else>{{message.msg}}</span>
+                <span v-else>{{" " + message.msg}}</span>
               </li>
             </ul>
           </div>
@@ -71,15 +71,14 @@
 </template>
 
 <script>
-
-import Whiteboard from "../components/WhiteBoard"
+import Whiteboard from "../components/WhiteBoard";
 
 export default {
   name: "About",
   data() {
     return { users: [], room: null, message: "", messages: [] };
   },
-  components:{Whiteboard},
+  components: { Whiteboard },
   methods: {
     async joinRoom() {
       let password = "";
@@ -93,10 +92,7 @@ export default {
         password
       });
     },
-    // leaveRoom() {
-    //   this.$socket.emit("leave_room");
-    //   this.$router.push("/rooms");
-    // },
+
     getUsers() {
       this.$socket.emit("get_users");
     },
@@ -119,15 +115,15 @@ export default {
     },
     sendMessage(e) {
       e.preventDefault();
-      if (this.$data.message.length != 0) {
-        this.$socket.emit("send_message", this.$data.message);
-        this.$data.message = "";
+      if (this.message.length != 0) {
+        this.$socket.emit("send_message", this.message);
+        this.message = "";
       }
     }
   },
   sockets: {
     receive_users(users) {
-      this.$data.users = users;
+      this.users = users;
     },
     receive_users_error(msg) {
       this.$swal({ title: msg, type: "error" });
@@ -137,15 +133,18 @@ export default {
       this.$router.push("/rooms");
     },
     receive_room(room) {
-      this.$data.room = room;
+      this.room = room;
       this.getUsers();
       this.joinRoom();
     },
     receive_message(msgObj) {
-      this.$data.messages.push(msgObj);
+      this.messages.push(msgObj);
     },
     receive_server_message(msg) {
-      this.$data.messages.push({ sender: "server", msg });
+      this.messages.push({ sender: "server", msg });
+    },
+    receive_callback(msg){
+      this.messages.push({ sender: "server", msg });
     }
   },
   mounted() {
@@ -186,5 +185,4 @@ export default {
   box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
   word-break: break-all;
 }
-
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="column is-6">
     <div class="card whiteboard-wrapper">
-      <canvas class="whiteboard" ref="canvas" height="600" width="800" @mousemove="drawLine"></canvas>
+      <canvas class="whiteboard" ref="canvas" height="600" width="800" @mousemove="emitLine"></canvas>
       <footer class="card-footer whiteboard-footer">
         <button class="button" @click="clearBoard">Clear</button>
       </footer>
@@ -17,23 +17,21 @@ export default {
   },
   methods: {
     clearBoard() {
-      this.$data.ctx.clearRect(
-        0,
-        0,
-        this.$refs.canvas.width,
-        this.$refs.canvas.height
-      );
+      this.$socket.emit("clear");
     },
-    drawLine(e) {
-      if (this.$data.draw) {
+    drawLine(line) {
+      let CTX = this.ctx;
+      CTX.beginPath();
+      CTX.moveTo(line.prevPos.x, line.prevPos.y);
+      CTX.lineTo(line.currPos.x, line.currPos.y);
+      CTX.stroke();
+    },
+    emitLine(e) {
+      if (this.draw) {
         let pos = this.getMousePosition(this.$refs.canvas, e);
-        let CTX = this.$data.ctx;
 
         if (this.prevPos.x != null && this.prevPos.y != null) {
-          CTX.beginPath();
-          CTX.moveTo(this.prevPos.x, this.prevPos.y);
-          CTX.lineTo(pos.x, pos.y);
-          CTX.stroke();
+          this.$socket.emit("paint", { prevPos: this.prevPos, currPos: pos });
         }
         // New previous pos
         this.prevPos.x = pos.x;
@@ -41,10 +39,10 @@ export default {
       }
     },
     enableDrawing() {
-      this.$data.draw = true;
+      this.draw = true;
     },
     disableDrawing() {
-      this.$data.draw = false;
+      this.draw = false;
       this.prevPos.x = null;
       this.prevPos.y = null;
     },
@@ -67,8 +65,28 @@ export default {
       window.removeEventListener("mouseup", this.disableDrawing);
     }
   },
+  sockets: {
+    paint(coords) {
+      if (coords) {
+        this.drawLine(coords);
+      }
+    },
+    getPainting(lines) {
+      for (let line of lines) {
+        this.drawLine(line);
+      }
+    },
+    clear() {
+      this.ctx.clearRect(
+        0,
+        0,
+        this.$refs.canvas.width,
+        this.$refs.canvas.height
+      );
+    }
+  },
   mounted() {
-    this.$data.ctx = this.$refs.canvas.getContext("2d");
+    this.ctx = this.$refs.canvas.getContext("2d");
     this.addEvents();
   },
   destroyed() {

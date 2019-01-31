@@ -2,18 +2,19 @@ class ROUND {
     constructor(word) {
         this.word = word.toLowerCase();
         this.clock = null;
-    }
-
-    start() {
-        this.clock = setTimeout(this.stopRound, 1000 * 60 * 2); // 2 Min round time
-    }
-
-    stop(){
-        clearTimeout(this.clock);
+        this.lineHistory = [];
     }
 
     check(word){
         return this.word == word.toLowerCase();
+    }
+
+    addLine(line){
+        this.lineHistory.push(line);
+    }
+
+    clearLines(){
+        this.lineHistory = [];
     }
 }
 
