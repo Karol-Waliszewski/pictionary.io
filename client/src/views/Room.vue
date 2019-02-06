@@ -145,6 +145,9 @@ export default {
     },
     receive_callback(msg){
       this.messages.push({ sender: "server", msg });
+    },
+    round_initialized(words){
+      console.log(words);
     }
   },
   mounted() {

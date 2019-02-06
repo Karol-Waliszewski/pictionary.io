@@ -1,7 +1,10 @@
+const axios = require("axios");
+const cheerio = require('cheerio')
 const ROUND = require('./round');
 
 class ROOM {
     constructor(options) {
+        this.id = options.id;
         this.name = options.name;
         this.isPrivate = options.isPrivate || false;
         this.password = options.password || "";
@@ -14,14 +17,33 @@ class ROOM {
         this.round = null;
     }
 
-    startRound() {
-        this.round = new ROUND('Test');
+    async getWord() {
+        let word = await axios.get('http://www.kalambury.org/lib/generate.php?fbclid=IwAR0jEZum7uQ8tSN8ZzpMt3c1ZXwe5KJYYuJRiay2sqyTfx_3pnjyEKAxDL4');
+        word = cheerio.load(word.data.trim()).text();
+        return word;
+    }
+
+    async initRound() {
+        let words = [await this.getWord(), await this.getWord(), await this.getWord()];
         this.setPainter();
+        io.to(this.painter).emit("round_initialized", words);
+
+        
+    }
+
+    startRound(word) {
+        this.round = new ROUND(word);
+        io.to(this.id).emit("round_started");
     }
 
     stopRound() {
         this.round = null
-        this.clearBoard()
+        this.clearBoard();
+
+        io.to(this.id).emit("round_stopped");
+
+        // Restart
+        this.startRound();
     }
 
     clearBoard() {
@@ -37,6 +59,8 @@ class ROOM {
         // Setting random user a painter
         let newPainter = users[Math.floor(Math.random() * Math.floor(users.length))];
         this.painter = newPainter;
+
+        io.to(this.id).emit("painter_changed", newPainter);
 
         return newPainter;
     }

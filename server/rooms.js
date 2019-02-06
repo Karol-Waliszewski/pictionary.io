@@ -54,7 +54,7 @@ const CREATE_ROOM = function (socket, options) {
   socket.join(roomID);
   socket.emit("room_created", roomID);
 
-  room.startRound();
+  room.initRound();
 
   setTimeout(() => {
     socket.emit("receive_users", room.getUsers());
