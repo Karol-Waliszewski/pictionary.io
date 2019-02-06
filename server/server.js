@@ -94,8 +94,14 @@ io.on("connection", socket => {
     if (room.painter == socket.id && room.round != null) {
       room.clearBoard();
     }
-  })
+  });
 
+  socket.on("word_chosen", word => {
+    let room = ROOMS.getSocketRoom(socket);
+    if (room.painter == socket.id && room.round == null) {
+      room.startRound(word);
+    }
+  });
 });
 
 http.listen(5050, () => {

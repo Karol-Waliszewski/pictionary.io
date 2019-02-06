@@ -28,7 +28,7 @@ class ROOM {
         this.setPainter();
         io.to(this.painter).emit("round_initialized", words);
 
-        
+        //TODO Clock timeout after 20 s
     }
 
     startRound(word) {
