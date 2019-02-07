@@ -26,6 +26,31 @@
             >Leave Room</router-link>
           </footer>
         </div>
+
+        <div class="card card--painter">
+          <header class="card-header">
+            <div class="card-header-title">
+              <p>Wybierz hasło</p>
+              <span>20s</span>
+            </div>
+          </header>
+          <div class="card-content">
+            <ul class="content">
+              <li>
+                <button class="button is-fullwidth">"Pocałuj żabkę w łapkę"</button>
+              </li>
+              <li>
+                <button class="button is-fullwidth">"Nie taki diabeł straszny jak go malują"</button>
+              </li>
+              <li>
+                <button class="button is-fullwidth">"Przyjaciół poznaje się w biedzie"</button>
+              </li>
+            </ul>
+          </div>
+          <!-- <footer class="card-footer">
+            
+          </footer>-->
+        </div>
       </div>
 
       <whiteboard/>
@@ -76,7 +101,7 @@ import Whiteboard from "../components/WhiteBoard";
 export default {
   name: "About",
   data() {
-    return { users: [], room: null, message: "", messages: [] };
+    return { users: [], room: null, message: "", messages: [], painter: null };
   },
   components: { Whiteboard },
   methods: {
@@ -143,11 +168,15 @@ export default {
     receive_server_message(msg) {
       this.messages.push({ sender: "server", msg });
     },
-    receive_callback(msg){
+    receive_callback(msg) {
       this.messages.push({ sender: "server", msg });
     },
-    round_initialized(words){
+    round_initialized(words) {
       console.log(words);
+    },
+    painter_changed(painter){
+      this.painter = painter;
+      console.log(painter);
     }
   },
   mounted() {
@@ -187,5 +216,12 @@ export default {
   padding: 0.5rem 1rem;
   box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
   word-break: break-all;
+}
+
+.card--painter {
+  margin-top: 2rem;
+  .card-header-title {
+    justify-content: space-between;
+  }
 }
 </style>
