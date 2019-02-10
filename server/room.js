@@ -34,6 +34,7 @@ class ROOM {
     startRound(word) {
         this.round = new ROUND(word);
         io.to(this.id).emit("round_started");
+        CHAT.sendServerMessage(this.id, `Round started!`);
     }
 
     stopRound() {
@@ -43,7 +44,7 @@ class ROOM {
         io.to(this.id).emit("round_stopped");
 
         // Restart
-        this.startRound();
+        this.initRound();
     }
 
     clearBoard() {
@@ -61,6 +62,7 @@ class ROOM {
         this.painter = newPainter;
 
         io.to(this.id).emit("painter_changed", newPainter);
+        io.to(this.painter).emit("receive_server_message", 'You are a new painter!');
 
         return newPainter;
     }

@@ -2,7 +2,7 @@
   <div class="column is-6">
     <div class="card whiteboard-wrapper">
       <canvas class="whiteboard" ref="canvas" height="600" width="800" @mousemove="emitLine"></canvas>
-      <footer class="card-footer whiteboard-footer">
+      <footer class="card-footer whiteboard-footer" v-if="iDraw">
         <button class="button" @click="clearBoard">Clear</button>
       </footer>
     </div>
@@ -15,6 +15,7 @@ export default {
   data() {
     return { prevPos: { x: null, y: null }, ctx: null, draw: false };
   },
+  props: ["iDraw"],
   methods: {
     clearBoard() {
       this.$socket.emit("clear");

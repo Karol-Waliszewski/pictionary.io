@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1>This is a room Page</h1>
+    <!-- <h1>This is a room Page</h1> -->
     <table class="table is-hoverable is-fullwidth">
       <thead>
         <tr>

@@ -131,6 +131,10 @@ const LEAVE_ROOM = function (socket) {
   for (let room of rooms) {
     for (let user of room.users) {
       if (user == socket.id) {
+        if (room.painter == socket.id) {
+          room.stopRound();
+          CHAT.sendServerMessage(room.id, `Painter (${socket.name}) left the game, choosing another painter...`);
+        }
         ROOMS.get(`${room.id}.users`).splice(
           ROOMS.subject[room.id].users.indexOf(socket.id),
           1

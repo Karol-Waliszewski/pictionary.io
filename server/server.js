@@ -6,6 +6,7 @@ const ROOMS = require("./rooms");
 const CHAT = require("./chat");
 
 global.io = io;
+global.CHAT = CHAT;
 
 app.get("/", (req, res) => {
   res.send("Hello world");
@@ -66,8 +67,7 @@ io.on("connection", socket => {
         sender: socket.name
       });
 
-      if (room.round != null) {
-
+      if (room.round != null && socket.id != room.painter) {
         // Checking if the message is correct
         if (room.round.check(msg)) {
           room.stopRound();
@@ -99,6 +99,7 @@ io.on("connection", socket => {
   socket.on("word_chosen", word => {
     let room = ROOMS.getSocketRoom(socket);
     if (room.painter == socket.id && room.round == null) {
+      console.log(word)
       room.startRound(word);
     }
   });

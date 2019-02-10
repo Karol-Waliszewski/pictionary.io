@@ -13,7 +13,7 @@
           </header>
           <div class="card-content">
             <ul class="content playerlist">
-              <li v-for="user in users" :key="user.id">
+              <li v-for="user in sortedUsers" :key="user.id">
                 {{user.name}} :
                 <span class="has-text-weight-bold">{{user.points}}</span>
               </li>
@@ -27,7 +27,7 @@
           </footer>
         </div>
 
-        <div class="card card--painter">
+        <div class="card card--painter" v-if="iDraw && !roundStarted && words.length > 0">
           <header class="card-header">
             <div class="card-header-title">
               <p>Wybierz hasło</p>
@@ -36,14 +36,8 @@
           </header>
           <div class="card-content">
             <ul class="content">
-              <li>
-                <button class="button is-fullwidth">"Pocałuj żabkę w łapkę"</button>
-              </li>
-              <li>
-                <button class="button is-fullwidth">"Nie taki diabeł straszny jak go malują"</button>
-              </li>
-              <li>
-                <button class="button is-fullwidth">"Przyjaciół poznaje się w biedzie"</button>
+              <li v-for="word in words" :key="word">
+                <button class="button is-fullwidth is-word" @click="()=>{chooseWord(word)}">{{word}}</button>
               </li>
             </ul>
           </div>
@@ -53,7 +47,7 @@
         </div>
       </div>
 
-      <whiteboard/>
+      <whiteboard :iDraw="iDraw"/>
 
       <div class="column is-3" id="chat">
         <div class="card chat">
@@ -101,7 +95,16 @@ import Whiteboard from "../components/WhiteBoard";
 export default {
   name: "About",
   data() {
-    return { users: [], room: null, message: "", messages: [], painter: null };
+    return {
+      users: [],
+      room: null,
+      message: "",
+      messages: [],
+      painter: null,
+      words: [],
+      iDraw: false,
+      roundStarted: false
+    };
   },
   components: { Whiteboard },
   methods: {
@@ -117,7 +120,6 @@ export default {
         password
       });
     },
-
     getUsers() {
       this.$socket.emit("get_users");
     },
@@ -144,6 +146,10 @@ export default {
         this.$socket.emit("send_message", this.message);
         this.message = "";
       }
+    },
+    chooseWord(word) {
+      this.$socket.emit("word_chosen", word);
+      this.words = [];
     }
   },
   sockets: {
@@ -172,11 +178,24 @@ export default {
       this.messages.push({ sender: "server", msg });
     },
     round_initialized(words) {
-      console.log(words);
+      this.words = words;
     },
-    painter_changed(painter){
+    round_started() {
+      this.roundStarted = true;
+    },
+    round_stopped() {
+      this.roundStarted = false;
+    },
+    painter_changed(painter) {
       this.painter = painter;
-      console.log(painter);
+      this.iDraw = painter == this.$socket.id;
+    }
+  },
+  computed: {
+    sortedUsers() {
+      return this.users.sort((a, b) => {
+        return b.points - a.points;
+      });
     }
   },
   mounted() {
@@ -223,5 +242,10 @@ export default {
   .card-header-title {
     justify-content: space-between;
   }
+}
+
+.is-word {
+  white-space: normal;
+  height: auto;
 }
 </style>
