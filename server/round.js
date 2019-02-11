@@ -1,19 +1,30 @@
 class ROUND {
     constructor(word) {
-        this.word = word.toLowerCase();
+        this.word = this.simplifyWord(word);
         this.clock = null;
         this.lineHistory = [];
     }
 
-    check(word){
-        return this.word == word.toLowerCase();
+    check(word) {
+        return this.word == this.simplifyWord(word);
     }
 
-    addLine(line){
+    isClose(word) {
+        if (word.length < 3) {
+            return false;
+        }
+        return this.word.includes(this.simplifyWord(word));
+    }
+
+    simplifyWord(word) {
+        return word.toLowerCase().replace(/\s/g, '').normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    }
+
+    addLine(line) {
         this.lineHistory.push(line);
     }
 
-    clearLines(){
+    clearLines() {
         this.lineHistory = [];
     }
 }

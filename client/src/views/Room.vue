@@ -30,7 +30,7 @@
         <div class="card card--painter" v-if="iDraw && !roundStarted && words.length > 0">
           <header class="card-header">
             <div class="card-header-title">
-              <p>Wybierz hasło</p>
+              <p>Choose next password</p>
               <span>20s</span>
             </div>
           </header>
