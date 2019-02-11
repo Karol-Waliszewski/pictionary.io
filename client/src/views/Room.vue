@@ -3,7 +3,7 @@
     <div class="columns is-multiline is-mobile">
       <div class="column is-full">
         <h1 class="title is-2 has-text-centered" v-if="room">{{room.name.toUpperCase()}}</h1>
-        <h2 v-if="room" class="subtitle is-4 has-text-centered">1:49</h2>
+        <h2 v-if="room" class="subtitle is-4 has-text-centered">{{parseInt(time/60)}}:{{time%60}}</h2>
       </div>
 
       <div class="column is-3">
@@ -103,7 +103,7 @@ export default {
       painter: null,
       words: [],
       iDraw: false,
-      roundStarted: false
+      roundStarted: false,time:0
     };
   },
   components: { Whiteboard },
@@ -189,6 +189,9 @@ export default {
     painter_changed(painter) {
       this.painter = painter;
       this.iDraw = painter == this.$socket.id;
+    },
+    countdown(time){
+      this.time = time;
     }
   },
   computed: {

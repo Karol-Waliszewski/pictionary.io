@@ -105,7 +105,6 @@ io.on("connection", socket => {
   socket.on("word_chosen", word => {
     let room = ROOMS.getSocketRoom(socket);
     if (room.painter == socket.id && room.round == null) {
-      console.log(word)
       room.startRound(word);
     }
   });

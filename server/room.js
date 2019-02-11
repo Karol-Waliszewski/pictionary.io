@@ -15,6 +15,10 @@ class ROOM {
         this.painter = null;
         this.created = true;
         this.round = null;
+        // this.clock = {
+        //     interval: null,
+        //     timeout: null
+        // }
     }
 
     async getWord() {
@@ -31,17 +35,29 @@ class ROOM {
         //TODO Clock timeout after 20 s
     }
 
+    // countDown(time, callback) {
+    //     io.to(this.id).emit('countdown', time);
+    //    // this.clock.timeout = setTimeout(callback, time * 1000)
+    //     this.clock.interval = setInterval(() => {
+    //         time--;
+    //         io.to(this.id).emit('countdown', time);
+    //     }, 1000);
+
+    // }
+
     startRound(word) {
         this.round = new ROUND(word);
         io.to(this.id).emit("round_started");
         CHAT.sendServerMessage(this.id, `Round started!`);
+        //this.countDown(120, this.stopRound);
     }
 
     stopRound() {
         this.round = null
         this.clearBoard();
-
         io.to(this.id).emit("round_stopped");
+        // clearTimeout(this.clock.interval);
+        // clearInterval(this.clock.timeout);
 
         // Restart
         this.initRound();
