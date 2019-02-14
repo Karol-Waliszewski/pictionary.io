@@ -3,7 +3,10 @@
     <div class="columns is-multiline is-mobile">
       <div class="column is-full">
         <h1 class="title is-2 has-text-centered" v-if="room">{{room.name.toUpperCase()}}</h1>
-        <h2 v-if="room" class="subtitle is-4 has-text-centered">{{parseInt(time/60)}}:{{time%60}}</h2>
+        <h2
+          v-if="room"
+          class="subtitle is-4 has-text-centered"
+        >{{parseInt(time/60)}}:{{(time%60 <= 9) ? "0"+time%60 : time%60}}</h2>
       </div>
 
       <div class="column is-3">
@@ -54,7 +57,7 @@
           <header class="card-header">
             <p class="card-header-title">Chat</p>
           </header>
-          <div class="chat-body">
+          <div class="chat-body" ref="chat">
             <ul class="chat-messages">
               <li v-for="message in messages" :key="message.id" class="chat-message">
                 <span
@@ -103,7 +106,8 @@ export default {
       painter: null,
       words: [],
       iDraw: false,
-      roundStarted: false,time:0
+      roundStarted: false,
+      time: 0
     };
   },
   components: { Whiteboard },
@@ -119,6 +123,7 @@ export default {
         id: this.$route.params.id,
         password
       });
+      this.messages = [];
     },
     getUsers() {
       this.$socket.emit("get_users");
@@ -149,7 +154,6 @@ export default {
     },
     chooseWord(word) {
       this.$socket.emit("word_chosen", word);
-      this.words = [];
     }
   },
   sockets: {
@@ -170,6 +174,9 @@ export default {
     },
     receive_message(msgObj) {
       this.messages.push(msgObj);
+      this.$nextTick(() => {
+        this.$refs.chat.scrollTo(0, this.$refs.chat.scrollHeight);
+      });
     },
     receive_server_message(msg) {
       this.messages.push({ sender: "server", msg });
@@ -182,6 +189,7 @@ export default {
     },
     round_started() {
       this.roundStarted = true;
+      this.words = [];
     },
     round_stopped() {
       this.roundStarted = false;
@@ -190,7 +198,7 @@ export default {
       this.painter = painter;
       this.iDraw = painter == this.$socket.id;
     },
-    countdown(time){
+    countdown(time) {
       this.time = time;
     }
   },
