@@ -16,8 +16,13 @@ const SEND_CALLBACK = function (socket, callbackObject) {
   socket.broadcast.emit("receive_server_message", callbackObject.broadcast);
 };
 
+const SEND_CALLBACK_ID = function (socketID, message) {
+  io.to(socketID).emit("receive_callback", message);
+};
+
 module.exports = {
   sendMessage: SEND_MESSAGE,
   sendServerMessage: SEND_SERVER_MESSAGE,
-  sendCallback: SEND_CALLBACK
+  sendCallback: SEND_CALLBACK,
+  sendCallbackID: SEND_CALLBACK_ID
 };

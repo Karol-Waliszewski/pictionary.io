@@ -15,10 +15,7 @@ class ROOM {
         this.painter = null;
         this.created = true;
         this.round = null;
-        // this.clock = {
-        //     interval: null,
-        //     timeout: null
-        // }
+
     }
 
     async getWord() {
@@ -35,29 +32,41 @@ class ROOM {
         //TODO Clock timeout after 20 s
     }
 
-    // countDown(time, callback) {
-    //     io.to(this.id).emit('countdown', time);
-    //    // this.clock.timeout = setTimeout(callback, time * 1000)
-    //     this.clock.interval = setInterval(() => {
-    //         time--;
-    //         io.to(this.id).emit('countdown', time);
-    //     }, 1000);
+    countDown(time) {
+        io.to(this.id).emit('countdown', time);
+        let interval = setInterval(() => {
+            if (time <= 0) {
+                this.stopRound();
+                CHAT.sendServerMessage(this.id, `No one guessed the word.`);
+                clearInterval(interval);
+            } else if (this.round == null) {
+                clearInterval(interval);
+            } else {
+                time--;
+                io.to(this.id).emit('countdown', time);
+            }
 
-    // }
+        }, 1000);
+
+    }
 
     startRound(word) {
-        this.round = new ROUND(word);
-        io.to(this.id).emit("round_started");
-        CHAT.sendServerMessage(this.id, `Round started!`);
-        //this.countDown(120, this.stopRound);
+        if (this.users.length > 1) {
+            this.round = new ROUND(word);
+            io.to(this.id).emit("round_started");
+            CHAT.sendServerMessage(this.id, `Round started!`);
+            this.countDown(120);
+        } else {
+            CHAT.sendCallbackID(this.painter, `You need at least 2 players to start the game!`);
+        }
     }
 
     stopRound() {
-        this.round = null
+        this.round = null;
         this.clearBoard();
         io.to(this.id).emit("round_stopped");
-        // clearTimeout(this.clock.interval);
-        // clearInterval(this.clock.timeout);
+        CHAT.sendServerMessage(this.id, `Round finished!`);
+        io.to(this.id).emit('countdown', 0);
 
         // Restart
         this.initRound();
@@ -78,7 +87,7 @@ class ROOM {
         this.painter = newPainter;
 
         io.to(this.id).emit("painter_changed", newPainter);
-        io.to(this.painter).emit("receive_server_message", 'You are a new painter!');
+        CHAT.sendCallbackID(this.painter, 'You are a new painter!');
 
         return newPainter;
     }
