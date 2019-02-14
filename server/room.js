@@ -29,6 +29,22 @@ class ROOM {
         this.setPainter();
         io.to(this.painter).emit("round_initialized", words);
 
+        let time = 20;
+        io.to(this.id).emit('countdown_painter', time);
+        let interval = setInterval(() => {
+            if (this.users.length > 1) {
+                if (time <= 0) {
+                    this.startRound(words[Math.floor(Math.random() * (words.length - 1))]);
+                    clearInterval(interval);
+                }
+                else if(this.round != null){
+                    clearInterval(interval);
+                }
+                time--;
+                io.to(this.id).emit('countdown_painter', time);
+            }
+        }, 1000);
+
         //TODO Clock timeout after 20 s
     }
 
@@ -45,7 +61,6 @@ class ROOM {
                 time--;
                 io.to(this.id).emit('countdown', time);
             }
-
         }, 1000);
 
     }
@@ -55,6 +70,7 @@ class ROOM {
             this.round = new ROUND(word);
             io.to(this.id).emit("round_started");
             CHAT.sendServerMessage(this.id, `Round started!`);
+            CHAT.sendCallbackID(this.painter, `The secret word is: ${word}`);
             this.countDown(120);
         } else {
             CHAT.sendCallbackID(this.painter, `You need at least 2 players to start the game!`);

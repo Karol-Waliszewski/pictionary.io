@@ -34,7 +34,7 @@
           <header class="card-header">
             <div class="card-header-title">
               <p>Choose next password</p>
-              <span>20s</span>
+              <span>{{wordTime}}s</span>
             </div>
           </header>
           <div class="card-content">
@@ -107,7 +107,8 @@ export default {
       words: [],
       iDraw: false,
       roundStarted: false,
-      time: 0
+      time: 0,
+      wordTime: 0
     };
   },
   components: { Whiteboard },
@@ -200,6 +201,9 @@ export default {
     },
     countdown(time) {
       this.time = time;
+    },
+    countdown_painter(time){
+      this.wordTime = time;
     }
   },
   computed: {
