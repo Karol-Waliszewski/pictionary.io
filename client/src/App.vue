@@ -12,7 +12,7 @@ import RoomCreator from "./components/RoomCreator.vue";
 export default {
   name: "App",
   data() {
-    return { users: [], isModalVisible: false };
+    return { users: [], isModalVisible: false, name: null };
   },
   components: {
     navigation: Nav,
@@ -27,7 +27,8 @@ export default {
     },
     closeCreator() {
       this.$data.isModalVisible = false;
-    }
+    },
+   
   },
   sockets: {
     room_created(id) {
@@ -35,8 +36,8 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
-      console.log(from);
+    async $route(to, from) {
+      
       if (from.name == "room") {
         this.leaveRoom();
       }

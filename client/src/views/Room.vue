@@ -15,7 +15,7 @@
             <p class="card-header-title">Players: {{users.length}}</p>
           </header>
           <div class="card-content">
-            <ul class="content playerlist">
+            <ul class="content playerlist" v-if="showUsers">
               <li v-for="user in sortedUsers" :key="user.id">
                 {{user.name}} :
                 <span class="has-text-weight-bold">{{user.points}}</span>
@@ -100,6 +100,7 @@ export default {
   data() {
     return {
       users: [],
+      showUsers: false,
       room: null,
       message: "",
       messages: [],
@@ -114,23 +115,44 @@ export default {
   components: { Whiteboard },
   methods: {
     async joinRoom() {
+      // Getting Password
       let password = "";
 
       if (!this.room.users.includes(this.$socket.id) && this.room.isPrivate) {
         password = await this.getPassword();
       }
 
+      // Getting Name
+      let name = await this.getName();
+      this.$socket.emit("setName", name);
+      this.$socket.name = name;
+      this.showUsers = true;
+
+      // Joining
       this.$socket.emit("join_room", {
         id: this.$route.params.id,
         password
       });
-      this.messages = [];
     },
     getUsers() {
       this.$socket.emit("get_users");
     },
     getRoomInfo() {
       this.$socket.emit("get_room", this.$route.params.id);
+    },
+    async getName() {
+      const name = await this.$swal({
+        title: "Enter your name",
+        input: "text",
+        showCancelButton: false,
+        inputPlaceholder: "Your name is...",
+        inputAttributes: {
+          autocapitalize: "off",
+          autocorrect: "off"
+        }
+      });
+
+      return name.value;
     },
     async getPassword() {
       const { value: password } = await this.$swal({
@@ -155,6 +177,11 @@ export default {
     },
     chooseWord(word) {
       this.$socket.emit("word_chosen", word);
+    },
+    scrollChat() {
+      this.$nextTick(() => {
+        this.$refs.chat.scrollTo(0, this.$refs.chat.scrollHeight);
+      });
     }
   },
   sockets: {
@@ -175,15 +202,15 @@ export default {
     },
     receive_message(msgObj) {
       this.messages.push(msgObj);
-      this.$nextTick(() => {
-        this.$refs.chat.scrollTo(0, this.$refs.chat.scrollHeight);
-      });
+      this.scrollChat();
     },
     receive_server_message(msg) {
       this.messages.push({ sender: "server", msg });
+      this.scrollChat();
     },
     receive_callback(msg) {
       this.messages.push({ sender: "server", msg });
+      this.scrollChat();
     },
     round_initialized(words) {
       this.words = words;
@@ -202,7 +229,7 @@ export default {
     countdown(time) {
       this.time = time;
     },
-    countdown_painter(time){
+    countdown_painter(time) {
       this.wordTime = time;
     }
   },
@@ -217,7 +244,8 @@ export default {
     this.getRoomInfo();
   },
   watch: {
-    $route(to, from) {
+    '$route.params.id': function(id) {
+      this.messages = [];
       this.getRoomInfo();
     }
   }

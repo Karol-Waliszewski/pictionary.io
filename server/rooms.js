@@ -35,9 +35,6 @@ const CREATE_ROOM = function (socket, options) {
   let pts = {};
   pts[socket.id] = 0;
 
-  let nms = {};
-  nms[socket.id] = socket.name
-
   let room = new ROOM({
     id: roomID,
     name: options.name,
@@ -45,7 +42,6 @@ const CREATE_ROOM = function (socket, options) {
     password: options.password || "",
     maxUsers: options.maxUsers || 8,
     users: [socket.id],
-    names: nms,
     points: pts,
     created: true
   })
@@ -115,7 +111,6 @@ const JOIN_ROOM = function (socket, id, password) {
   LEAVE_ROOM(socket);
   socket.join(id);
   ROOMS.get(`${id}.users`).push(socket.id);
-  ROOMS.set(`${id}.names.${socket.id}`, socket.name);
   ROOMS.set(`${id}.points.${socket.id}`, 0);
 
   return true;

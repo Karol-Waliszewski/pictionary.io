@@ -11,11 +11,9 @@ class ROOM {
         this.maxUsers = options.maxUsers || 8;
         this.users = options.users || [];
         this.points = options.points || {};
-        this.names = options.names || {};
         this.painter = null;
         this.created = true;
         this.round = null;
-
     }
 
     async getWord() {
@@ -36,16 +34,13 @@ class ROOM {
                 if (time <= 0) {
                     this.startRound(words[Math.floor(Math.random() * (words.length - 1))]);
                     clearInterval(interval);
-                }
-                else if(this.round != null){
+                } else if (this.round != null) {
                     clearInterval(interval);
                 }
                 time--;
                 io.to(this.id).emit('countdown_painter', time);
             }
         }, 1000);
-
-        //TODO Clock timeout after 20 s
     }
 
     countDown(time) {
@@ -98,6 +93,9 @@ class ROOM {
     setPainter() {
         // Getting users except current painter
         let users = this.users.filter(user => user != this.painter);
+
+        if (users.length == 0) return false;
+
         // Setting random user a painter
         let newPainter = users[Math.floor(Math.random() * Math.floor(users.length))];
         this.painter = newPainter;
@@ -105,7 +103,7 @@ class ROOM {
         io.to(this.id).emit("painter_changed", newPainter);
         CHAT.sendCallbackID(this.painter, 'You are a new painter!');
 
-        return newPainter;
+        return true;
     }
 
     getPainter() {
@@ -123,7 +121,7 @@ class ROOM {
             usrs.push({
                 id: user,
                 points: this.points[user] || 0,
-                name: this.names[user] || user
+                name: io.sockets.sockets[user].name || user
             });
         }
         return usrs;

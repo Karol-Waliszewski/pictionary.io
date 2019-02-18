@@ -25,7 +25,7 @@
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
+        <div class="navbar-item" v-if="!inRoom">
           <button class="button is-primary" @click="openCreator">
             <strong>Create a room</strong>
           </button>
@@ -38,9 +38,17 @@
 <script>
 export default {
   name: "Nav",
+  data() {
+    return { inRoom: false };
+  },
   methods: {
     openCreator() {
       this.$emit("openCreator");
+    }
+  },
+  watch: {
+    $route: function(to, from) {
+      this.inRoom = (to.name == 'room') ? true : false;
     }
   }
 };

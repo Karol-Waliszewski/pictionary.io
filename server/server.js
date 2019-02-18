@@ -26,6 +26,9 @@ io.on("connection", socket => {
   // Set socket's name
   socket.on("setName", name => {
     socket.name = name;
+    let room = ROOMS.getSocketRoom(socket);
+    if (room)
+      io.to(room.id).emit('receive_users', room.getUsers());
   });
 
   // Creating the room
