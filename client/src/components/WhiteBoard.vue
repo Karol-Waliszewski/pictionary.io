@@ -85,11 +85,11 @@ export default {
       window.removeEventListener("touchstart", this.enableDrawing);
       window.removeEventListener("mouseup", this.disableDrawing);
       window.removeEventListener("touchend", this.disableDrawing);
-      this.$refs.canvas.removeEventListener(
-        "touchmove",
-        this.getTouchPosition,
-        false
-      );
+      // this.$refs.canvas.removeEventListener(
+      //   "touchmove",
+      //   this.getTouchPosition,
+      //   false
+      // );
     }
   },
   sockets: {
