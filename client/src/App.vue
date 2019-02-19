@@ -27,8 +27,7 @@ export default {
     },
     closeCreator() {
       this.$data.isModalVisible = false;
-    },
-   
+    }
   },
   sockets: {
     room_created(id) {
@@ -37,7 +36,6 @@ export default {
   },
   watch: {
     async $route(to, from) {
-      
       if (from.name == "room") {
         this.leaveRoom();
       }
@@ -45,8 +43,18 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
 #app {
   margin: 0;
+}
+
+a {
+  color: #00d1b2 !important;
+}
+
+.section-xs {
+  @media screen and (max-width: 670px) {
+    padding: 3rem 1.5rem;
+  }
 }
 </style>

@@ -1,11 +1,26 @@
 <template>
   <div id="app">
-    <section class="hero is-light is-fullheight">
+    <section class="section hero">
       <div class="hero-body">
         <div class="container has-text-centered">
-          <div class="column is-4 is-offset-4">
-            <h3 class="title has-text-grey">Hello!</h3>
-           
+          <div class="column is-6 is-offset-3">
+            <h2 class="title is-1">Hello 👋</h2>
+            <h3 class="subtitle is-2">Welcome on <a href="/">charades.io</a>!</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class=" container has-text-centered">
+      <div class="hero is-primary">
+        <div class="hero-body">
+          <div class="content">
+            <h4 class="title is-3 ">The rules are simple:</h4>
+            <p>Every round takes max. 2 minutes</p>
+            <p>You need at least 2 players to start the game</p>
+            <p>As a painter you have to draw choosen word</p>
+            <p>As a viewer you have to guess the word</p>
+            <h5 class="title is-5">Enjoy :)</h5>
           </div>
         </div>
       </div>
@@ -20,8 +35,7 @@ export default {
     return {
       name: ""
     };
-  },
-
+  }
 };
 </script>
 

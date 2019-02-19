@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="columns is-multiline is-mobile">
+  <div class="section-xs container">
+    <div class="columns is-multiline">
       <div class="column is-full">
         <h1 class="title is-2 has-text-centered" v-if="room">{{room.name.toUpperCase()}}</h1>
         <h2
