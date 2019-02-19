@@ -41,11 +41,23 @@ export default {
     },
     enableDrawing() {
       this.draw = true;
+      console.log("enable?");
     },
     disableDrawing() {
       this.draw = false;
       this.prevPos.x = null;
       this.prevPos.y = null;
+    },
+    getTouchPosition(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var touch = e.touches[0];
+      var mouseEvent = new MouseEvent("mousemove", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      });
+      //console.log(mouseEvent)
+      this.emitLine(mouseEvent);
     },
     getMousePosition(canvas, evt) {
       var rect = canvas.getBoundingClientRect(),
@@ -59,11 +71,25 @@ export default {
     },
     addEvents() {
       window.addEventListener("mousedown", this.enableDrawing);
+      window.addEventListener("touchstart", this.enableDrawing);
       window.addEventListener("mouseup", this.disableDrawing);
+      window.addEventListener("touchend", this.disableDrawing);
+      this.$refs.canvas.addEventListener(
+        "touchmove",
+        this.getTouchPosition,
+        false
+      );
     },
     removeEvents() {
       window.removeEventListener("mousedown", this.enableDrawing);
+      window.removeEventListener("touchstart", this.enableDrawing);
       window.removeEventListener("mouseup", this.disableDrawing);
+      window.removeEventListener("touchend", this.disableDrawing);
+      this.$refs.canvas.removeEventListener(
+        "touchmove",
+        this.getTouchPosition,
+        false
+      );
     }
   },
   sockets: {
