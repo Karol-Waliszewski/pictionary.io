@@ -5,6 +5,7 @@
     transition="fade"
     @cancel="close"
     @ok="createRoom"
+    class="section-xs"
   >
     <form class="columns is-multiline">
       <div class="field column is-12">

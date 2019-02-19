@@ -48,13 +48,15 @@ export default {
   margin: 0;
 }
 
-a {
-  color: #00d1b2 !important;
+.subtitle {
+  a {
+    color: #00d1b2;
+  }
 }
 
 .section-xs {
   @media screen and (max-width: 670px) {
-    padding: 3rem 1.5rem;
+    padding: 1.5rem;
   }
 }
 </style>

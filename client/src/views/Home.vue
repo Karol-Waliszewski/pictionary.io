@@ -11,7 +11,7 @@
       </div>
     </section>
 
-    <section class=" container has-text-centered">
+    <section class="section-xs container has-text-centered">
       <div class="hero is-primary">
         <div class="hero-body">
           <div class="content">

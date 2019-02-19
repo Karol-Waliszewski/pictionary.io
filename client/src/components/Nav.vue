@@ -11,6 +11,7 @@
         aria-label="menu"
         aria-expanded="false"
         data-target="navbarBasicExample"
+        @click="toggleNav"
       >
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -18,7 +19,7 @@
       </a>
     </div>
 
-    <div id="navbarBasicExample" class="navbar-menu">
+    <div id="navbarBasicExample" class="navbar-menu" :class="{'is-active':active}">
       <div class="navbar-start">
         <router-link to="/" class="navbar-item">Homepage</router-link>
         <router-link to="/rooms" class="navbar-item">Rooms</router-link>
@@ -39,11 +40,14 @@
 export default {
   name: "Nav",
   data() {
-    return { inRoom: false };
+    return { inRoom: false,active:false };
   },
   methods: {
     openCreator() {
       this.$emit("openCreator");
+    },
+    toggleNav(){
+      this.active = !this.active;
     }
   },
   watch: {
