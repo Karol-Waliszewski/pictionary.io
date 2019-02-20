@@ -1,19 +1,15 @@
 self.__precacheManifest = [
   {
-    "revision": "9b62ebb8a1a1801ca02d",
-    "url": "/charades.io/js/about.ec56283b.js"
-  },
-  {
-    "revision": "880b3c1b1a2c06ac849f",
+    "revision": "0c95958ba9da05bf9348",
     "url": "/charades.io/css/app.982fbb57.css"
   },
   {
-    "revision": "880b3c1b1a2c06ac849f",
-    "url": "/charades.io/js/app.9e290826.js"
+    "revision": "0c95958ba9da05bf9348",
+    "url": "/charades.io/js/app.3de8f8f5.js"
   },
   {
-    "revision": "91d0f7851aab1af6eff1",
-    "url": "/charades.io/js/chunk-2d21098f.7e546e56.js"
+    "revision": "c1edd93cf817f3204759",
+    "url": "/charades.io/js/chunk-2d21098f.104d05bc.js"
   },
   {
     "revision": "4480b87fad86220af615",
@@ -36,7 +32,7 @@ self.__precacheManifest = [
     "url": "/charades.io/img/brush.d23a1109.svg"
   },
   {
-    "revision": "9875950abdf49b2a7b873746291f420b",
+    "revision": "f832d09217400d2756fa2d7ba8933bfb",
     "url": "/charades.io/index.html"
   },
   {
