@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "40cd8fedacc849cfabd3",
+    "revision": "1bbc43773515e0218a4f",
     "url": "/charades.io/css/app.982fbb57.css"
   },
   {
-    "revision": "40cd8fedacc849cfabd3",
-    "url": "/charades.io/js/app.c4223d94.js"
+    "revision": "1bbc43773515e0218a4f",
+    "url": "/charades.io/js/app.ec20edbe.js"
   },
   {
     "revision": "c1edd93cf817f3204759",
@@ -32,7 +32,7 @@ self.__precacheManifest = [
     "url": "/charades.io/img/brush.d23a1109.svg"
   },
   {
-    "revision": "2739f0621344dddca53314356f178256",
+    "revision": "8a0e1d7756f251fd563ef92baff8c6da",
     "url": "/charades.io/index.html"
   },
   {
