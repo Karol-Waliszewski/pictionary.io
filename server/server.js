@@ -73,12 +73,12 @@ io.on("connection", socket => {
       if (room.round != null && socket.id != room.painter) {
         // Checking if the message is correct
         if (room.round.check(msg)) {
-          room.stopRound();
           ROOMS.givePoints(socket);
           CHAT.sendCallback(socket, {
-            self: `Congratulations! You've guessed the password!`,
-            broadcast: `${socket.name} guessed the word and earned 1 point!`
+            self: `Congratulations! You've guessed the word!`,
+            broadcast: `${socket.name} guessed the word (${room.round.word}) and earned 1 point!`
           });
+                    room.stopRound();
         } else {
           if (room.round.isClose(msg)) {
             CHAT.sendCallback(socket, {
@@ -113,8 +113,10 @@ io.on("connection", socket => {
   });
 });
 
-http.listen(5050, () => {
-  console.log("Puns.io server is listening on port 5050");
+let port = process.env.PORT || 5050;
+
+http.listen(port, () => {
+  console.log(`Puns.io server is listening on port: ${port}`);
 });
 
 process.on("exit", function (code) {

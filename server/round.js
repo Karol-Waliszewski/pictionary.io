@@ -1,19 +1,19 @@
 class ROUND {
     constructor(word) {
-        this.word = this.simplifyWord(word);
+        this.word = word;
         this.clock = null;
         this.lineHistory = [];
     }
 
     check(word) {
-        return this.word == this.simplifyWord(word);
+        return this.simplifyWord(this.word) == this.simplifyWord(word);
     }
 
     isClose(word) {
         if (word.length < 3) {
             return false;
         }
-        return this.word.includes(this.simplifyWord(word));
+        return this.simplifyWord(this.word).includes(this.simplifyWord(word)) || this.simplifyWord(word).includes(this.simplifyWord(this.word));
     }
 
     simplifyWord(word) {

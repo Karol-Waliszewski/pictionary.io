@@ -47,8 +47,8 @@ class ROOM {
         io.to(this.id).emit('countdown', time);
         let interval = setInterval(() => {
             if (time <= 0) {
+                CHAT.sendServerMessage(this.id, `No one guessed the word. The word was: ${this.round.word}`);
                 this.stopRound();
-                CHAT.sendServerMessage(this.id, `No one guessed the word.`);
                 clearInterval(interval);
             } else if (this.round == null) {
                 clearInterval(interval);

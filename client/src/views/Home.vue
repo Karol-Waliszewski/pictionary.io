@@ -5,7 +5,7 @@
         <div class="container has-text-centered">
           <div class="column is-6 is-offset-3">
             <h2 class="title is-1">Hello 👋</h2>
-            <h3 class="subtitle is-2">Welcome on <a href="/">charades.io</a>!</h3>
+            <h3 class="subtitle is-2">Welcome on <a href="./">charades.io</a>!</h3>
           </div>
         </div>
       </div>
