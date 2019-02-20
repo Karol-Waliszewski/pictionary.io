@@ -1,7 +1,7 @@
 {
-  "name": "puns.io-server",
+  "name": "charades.io-server",
   "version": "0.0.1",
-  "description": "Server for self-made puns game",
+  "description": "Server for self-made charades game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -47,12 +47,12 @@ export default {
   sockets: {
     receive_rooms(rooms) {
       this.$data.rooms = rooms;
-      console.log(rooms);
+      //console.log(rooms);
     }
   },
   mounted() {
     this.getRooms();
-    console.log(this.$socket);
+   // console.log(this.$socket);
   }
 };
 </script>

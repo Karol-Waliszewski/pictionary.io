@@ -13,8 +13,9 @@ Vue.config.productionTip = false;
 // Vue + Socket.io
 Vue.use(
   new VueSocketIO({
-    debug: true,
-    connection: "http://charadesio.ct8.pl/"
+    debug: false,
+    connection: "http://charadesio.ct8.pl/",
+    secure: true
   })
 );
 
