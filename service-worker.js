@@ -14,10 +14,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.987bd5bf0741b4a754d481d8cc10ff47.js"
+  "/precache-manifest.dd823fe8e3551e8454de2f4ed9f59577.js"
 );
 
-workbox.core.setCacheNameDetails({prefix: "puns.io-client"});
+workbox.core.setCacheNameDetails({prefix: "charades.io-client"});
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
