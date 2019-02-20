@@ -2,7 +2,7 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <router-link to="/" class="navbar-item" href="https://bulma.io">
-        <img src="https://image.flaticon.com/icons/svg/129/129817.svg" width="38" height="28">
+        <img src="@/assets/brush.svg" width="38" height="32">
       </router-link>
 
       <a

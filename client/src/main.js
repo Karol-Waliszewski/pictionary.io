@@ -14,7 +14,7 @@ Vue.config.productionTip = false;
 Vue.use(
   new VueSocketIO({
     debug: true,
-    connection: "http://localhost:5050/"
+    connection: "http://charadesio.ct8.pl/"
   })
 );
 
