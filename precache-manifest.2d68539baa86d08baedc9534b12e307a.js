@@ -1,23 +1,23 @@
 self.__precacheManifest = [
   {
-    "revision": "8867ee64251548093822",
+    "revision": "bca1349c142393ecd91b",
     "url": "/charades.io/css/app.982fbb57.css"
   },
   {
-    "revision": "8867ee64251548093822",
-    "url": "/charades.io/js/app.f630cd5d.js"
+    "revision": "bca1349c142393ecd91b",
+    "url": "/charades.io/js/app.217de29f.js"
   },
   {
     "revision": "c1edd93cf817f3204759",
     "url": "/charades.io/js/chunk-2d21098f.104d05bc.js"
   },
   {
-    "revision": "4480b87fad86220af615",
+    "revision": "8f6b7b70af467f09660d",
     "url": "/charades.io/css/chunk-d499b55a.cf2c1808.css"
   },
   {
-    "revision": "4480b87fad86220af615",
-    "url": "/charades.io/js/chunk-d499b55a.939d0db7.js"
+    "revision": "8f6b7b70af467f09660d",
+    "url": "/charades.io/js/chunk-d499b55a.f6ad67f6.js"
   },
   {
     "revision": "c6b432d65dc7340a63e8",
@@ -32,7 +32,7 @@ self.__precacheManifest = [
     "url": "/charades.io/img/brush.d23a1109.svg"
   },
   {
-    "revision": "a0c1aa8a5a817f3efc96e01b4c6fc830",
+    "revision": "ebcadc81e65341b7b16edbec3b11cb0c",
     "url": "/charades.io/index.html"
   },
   {
