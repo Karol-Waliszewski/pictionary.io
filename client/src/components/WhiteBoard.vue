@@ -41,7 +41,7 @@ export default {
     },
     enableDrawing() {
       this.draw = true;
-      console.log("enable?");
+      //console.log("enable?");
     },
     disableDrawing() {
       this.draw = false;

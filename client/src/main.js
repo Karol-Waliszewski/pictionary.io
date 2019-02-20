@@ -14,7 +14,7 @@ Vue.config.productionTip = false;
 Vue.use(
   new VueSocketIO({
     debug: false,
-    connection: "http://charadesio.ct8.pl/",
+    connection: "https://cors-anywhere.herokuapp.com/http://charadesio.ct8.pl/",
     secure: true
   })
 );
