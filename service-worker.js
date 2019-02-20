@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/charades.io/precache-manifest.70affc438d5373021dc25d4eba478920.js"
+  "/charades.io/precache-manifest.d2b85dfd674633a19b05229eab3ce17e.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "charades.io-client"});
