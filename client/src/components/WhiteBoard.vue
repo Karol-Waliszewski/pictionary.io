@@ -28,7 +28,7 @@ export default {
       CTX.stroke();
     },
     emitLine(e) {
-      if (this.draw) {
+      if (this.draw && this.iDraw) {
         let pos = this.getMousePosition(this.$refs.canvas, e);
 
         if (this.prevPos.x != null && this.prevPos.y != null) {
@@ -49,15 +49,17 @@ export default {
       this.prevPos.y = null;
     },
     getTouchPosition(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var touch = e.touches[0];
-      var mouseEvent = new MouseEvent("mousemove", {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-      });
-      //console.log(mouseEvent)
-      this.emitLine(mouseEvent);
+      if (this.iDraw) {
+        e.preventDefault();
+        e.stopPropagation();
+        var touch = e.touches[0];
+        var mouseEvent = new MouseEvent("mousemove", {
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        });
+        //console.log(mouseEvent)
+        this.emitLine(mouseEvent);
+      }
     },
     getMousePosition(canvas, evt) {
       var rect = canvas.getBoundingClientRect(),

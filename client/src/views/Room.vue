@@ -16,7 +16,11 @@
           </header>
           <div class="card-content">
             <ul class="content playerlist" v-if="showUsers">
-              <li v-for="user in sortedUsers" :key="user.id">
+              <li v-for="user in sortedUsers" :key="user.id" v-if="painter == user.id">
+                <strong>{{user.name}} ✏️</strong> :
+                <span class="has-text-weight-bold">{{user.points}}</span>
+              </li>
+              <li :key="user.id" v-else>
                 {{user.name}} :
                 <span class="has-text-weight-bold">{{user.points}}</span>
               </li>
@@ -44,9 +48,17 @@
               </li>
             </ul>
           </div>
-          <!-- <footer class="card-footer">
-            
-          </footer>-->
+        </div>
+
+        <div class="card card--painter" v-if="iDraw && roundStarted">
+          <header class="card-header">
+            <div class="card-header-title">
+              <p>Your secret password</p>
+            </div>
+          </header>
+          <div class="card-content">
+            <p class="content">{{password}}</p>
+          </div>
         </div>
       </div>
 
@@ -72,7 +84,7 @@
             </ul>
           </div>
           <footer class="card-footer">
-            <form class="field has-addons" @submit="sendMessage">
+            <form class="field has-addons chat-input" @submit="sendMessage">
               <div class="control">
                 <input
                   v-model="message"
@@ -107,6 +119,7 @@ export default {
       painter: null,
       words: [],
       iDraw: false,
+      password: null,
       roundStarted: false,
       time: 0,
       wordTime: 0
@@ -178,6 +191,10 @@ export default {
     chooseWord(word) {
       this.$socket.emit("word_chosen", word);
     },
+    setPainter(painter) {
+      this.painter = painter;
+      this.iDraw = painter == this.$socket.id;
+    },
     scrollChat() {
       this.$nextTick(() => {
         this.$refs.chat.scrollTo(0, this.$refs.chat.scrollHeight);
@@ -196,9 +213,15 @@ export default {
       this.$router.push("/rooms");
     },
     receive_room(room) {
-      this.room = room;
-      this.getUsers();
-      this.joinRoom();
+      if (room) {
+        this.room = room;
+        this.setPainter(room.painter);
+        this.getUsers();
+        this.joinRoom();
+      } else {
+        this.$swal({ title: "This room does not exist", type: "error" });
+        this.$router.push("/rooms");
+      }
     },
     receive_message(msgObj) {
       this.messages.push(msgObj);
@@ -212,6 +235,9 @@ export default {
       this.messages.push({ sender: "server", msg });
       this.scrollChat();
     },
+    receive_password(password) {
+      this.password = password;
+    },
     round_initialized(words) {
       this.words = words;
     },
@@ -223,8 +249,7 @@ export default {
       this.roundStarted = false;
     },
     painter_changed(painter) {
-      this.painter = painter;
-      this.iDraw = painter == this.$socket.id;
+      this.setPainter(painter);
     },
     countdown(time) {
       this.time = time;
@@ -244,7 +269,7 @@ export default {
     this.getRoomInfo();
   },
   watch: {
-    '$route.params.id': function(id) {
+    "$route.params.id": function(id) {
       this.messages = [];
       this.getRoomInfo();
     }
@@ -267,6 +292,9 @@ export default {
   height: 500px;
   overflow-y: auto;
   overflow-x: hidden;
+  @media screen and (max-width: 670px) {
+    height: 200px;
+  }
 }
 
 .chat-messages {
@@ -278,6 +306,15 @@ export default {
   padding: 0.5rem 1rem;
   box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
   word-break: break-all;
+}
+
+.chat-input {
+  display: flex;
+  justify-content: stretch;
+  width: 100%;
+  .control:first-child {
+    flex: 1;
+  }
 }
 
 .card--painter {

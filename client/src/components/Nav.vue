@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <router-link to="/" class="navbar-item" href="https://bulma.io">
+      <router-link to="/" class="navbar-item">
         <img src="@/assets/brush.svg" width="38" height="32">
       </router-link>
 

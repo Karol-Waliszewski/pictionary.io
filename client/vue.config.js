@@ -1,3 +1,4 @@
 module.exports = {
-    publicPath: 'charades.io/'
+    publicPath: 'charades.io/',
+     
 }
