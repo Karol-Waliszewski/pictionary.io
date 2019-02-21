@@ -64,6 +64,7 @@ class ROOM {
         if (this.users.length > 1) {
             this.round = new ROUND(word);
             io.to(this.id).emit("round_started");
+            io.to(this.painter).emit('receive_password',word);
             CHAT.sendServerMessage(this.id, `Round started!`);
             CHAT.sendCallbackID(this.painter, `The secret word is: ${word}`);
             this.countDown(120);

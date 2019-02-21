@@ -9,7 +9,7 @@ global.io = io;
 global.CHAT = CHAT;
 
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.redirect('https://karol-waliszewski.github.io/charades.io/');
 });
 
 io.on("connection", socket => {
@@ -78,7 +78,7 @@ io.on("connection", socket => {
             self: `Congratulations! You've guessed the word!`,
             broadcast: `${socket.name} guessed the word (${room.round.word}) and earned 1 point!`
           });
-                    room.stopRound();
+          room.stopRound();
         } else {
           if (room.round.isClose(msg)) {
             CHAT.sendCallback(socket, {

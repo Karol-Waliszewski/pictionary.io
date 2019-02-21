@@ -9,7 +9,7 @@ ROOMS.on("change", function (change) {
 
   io.to(ID).emit("receive_users", ROOMS.subject[ID].getUsers());
 
-  console.log(ROOMS.subject[ID])
+  // console.log(ROOMS.subject[ID])
 
   if (ROOMS.subject[ID].users.length == 0) {
     if ("created" in ROOMS.subject[ID]) {
@@ -78,16 +78,17 @@ const GET_ROOM = function (id) {
 };
 
 const JOIN_ROOM = function (socket, id, password) {
+
   let room = ROOMS.subject[id];
   let flag = true;
 
-  if (room.users.includes(socket.id)) {
-    return false; // You're already in this room;
+  if (typeof room == "undefined") {
+    socket.emit("join_room_error", "This room doesn't exist");
+    return false;
   }
 
-  if (typeof room == "undefined") {
-    var msg = "This room doesn't exist";
-    flag = false;
+  if (room.users.includes(socket.id)) {
+    return false; // You're already in this room;
   }
 
   if (room.users.length == room.maxUsers) {
@@ -103,7 +104,7 @@ const JOIN_ROOM = function (socket, id, password) {
   }
 
   if (!flag) {
-    console.error(msg);
+    //console.error(msg);
     socket.emit("join_room_error", msg);
     return false;
   }

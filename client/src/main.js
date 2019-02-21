@@ -14,9 +14,8 @@ Vue.config.productionTip = false;
 Vue.use(
   new VueSocketIO({
     debug: false,
-    connection: "https://charadesio.herokuapp.com/",
-    //connection: "http://localhost:5050",
-    secure: true
+    //connection: "https://charadesio.herokuapp.com/",
+    connection: "http://localhost:5050"
   })
 );
 
