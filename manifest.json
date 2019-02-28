@@ -1,6 +1,6 @@
 {
-  "name": "charades.io",
-  "short_name": "charades.io",
+  "name": "pictionary.io",
+  "short_name": "pictionary.io",
   "icons": [
     {
       "src": "./icons/brush.png",
