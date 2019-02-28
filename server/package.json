@@ -1,7 +1,7 @@
 {
-  "name": "charades.io-server",
+  "name": "pictionary.io-server",
   "version": "0.0.1",
-  "description": "Server for self-made charades game",
+  "description": "Server for self-made pictionary game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
