@@ -94,7 +94,7 @@
                 >
               </div>
               <div class="control">
-                <input type="submit" class="button is-info is-borderless" value="Send">
+                <input type="submit" class="button is-primary is-borderless" value="Send">
               </div>
             </form>
           </footer>
