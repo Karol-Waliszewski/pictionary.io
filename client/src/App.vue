@@ -3,10 +3,12 @@
     <navigation @openCreator="openCreator"/>
     <router-view/>
     <room-creator :isVisible="isModalVisible" @closeCreator="closeCreator"></room-creator>
+    <foot></foot>
   </div>
 </template>
 <script>
 import Nav from "./components/Nav";
+import Footer from "./components/Footer";
 import RoomCreator from "./components/RoomCreator.vue";
 
 export default {
@@ -16,6 +18,7 @@ export default {
   },
   components: {
     navigation: Nav,
+    foot: Footer,
     "room-creator": RoomCreator
   },
   methods: {
@@ -46,6 +49,9 @@ export default {
 <style lang="scss">
 #app {
   margin: 0;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 7rem;
 }
 
 .subtitle {

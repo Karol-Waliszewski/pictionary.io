@@ -10,7 +10,7 @@
     "puns"
   ],
   "author": "Karol Waliszewski",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",

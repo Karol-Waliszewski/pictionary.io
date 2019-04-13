@@ -18,6 +18,11 @@
 + [Vue.js](https://vuejs.org/)
 + [Socket.io](https://socket.io/)
 
+#### License ⚖️
+
+[MIT](https://en.wikipedia.org/wiki/MIT_License)
+
+
 #### Meta
 Karol Waliszewski - [github](https://github.com/Karol-Waliszewski) - [karolwaliszewski@gmail.com](mailto:karolwaliszewski@gmail.com)
 
