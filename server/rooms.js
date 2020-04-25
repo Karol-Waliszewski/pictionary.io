@@ -1,26 +1,7 @@
 const createID = require("uniqid");
-const observe = require("observe");
-const ROOM = require('./room');
+const ROOM = require("./room");
 
-var ROOMS = observe({});
-
-ROOMS.on("change", function (change) {
-  let ID = change.property[0];
-
-  io.to(ID).emit("receive_users", ROOMS.subject[ID].getUsers());
-
-  // console.log(ROOMS.subject[ID])
-
-  if (ROOMS.subject[ID].users.length == 0) {
-    if ("created" in ROOMS.subject[ID]) {
-      delete ROOMS.subject[ID].created;
-    } else {
-      delete ROOMS.subject[ID];
-    }
-  }
-
-  io.emit("receive_rooms", GET_ROOMS());
-});
+var ROOMS = {};
 
 const CREATE_ROOM = function (socket, options) {
   if (typeof options.name == "undefined" || options.name.length == 0) {
@@ -32,8 +13,6 @@ const CREATE_ROOM = function (socket, options) {
   LEAVE_ROOM(socket);
 
   let roomID = createID();
-  let pts = {};
-  pts[socket.id] = 0;
 
   let room = new ROOM({
     id: roomID,
@@ -41,45 +20,45 @@ const CREATE_ROOM = function (socket, options) {
     isPrivate: options.isPrivate || false,
     password: options.password || "",
     maxUsers: options.maxUsers || 8,
-    users: [socket.id],
-    points: pts,
-    created: true
-  })
+    users: [],
+    points: {},
+    created: true,
+  });
 
-  ROOMS.set(roomID, room);
+  ROOMS[roomID] = room;
+  socket.name = "Host";
+  room.addUser(socket);
   socket.join(roomID);
   socket.emit("room_created", roomID);
+  UPDATE_ROOMS()
 
   room.initRound();
-
-  setTimeout(() => {
-    socket.emit("receive_users", room.getUsers());
-  }, 100);
-
-  setTimeout(() => {
-    delete ROOMS.subject[roomID].created;
-  }, 150);
 
   return true;
 };
 
 const GET_ROOMS = function () {
   let rooms = [];
-  for (let room in ROOMS.subject) {
-    rooms.push(Object.assign(ROOMS.subject[room], {
-      id: room
-    }));
+  for (let room in ROOMS) {
+    rooms.push(
+      Object.assign(ROOMS[room], {
+        id: room,
+      })
+    );
   }
   return rooms;
 };
 
+const UPDATE_ROOMS = function () {
+  io.emit("receive_rooms", GET_ROOMS());
+}
+
 const GET_ROOM = function (id) {
-  return ROOMS.subject[id];
+  return ROOMS[id];
 };
 
 const JOIN_ROOM = function (socket, id, password) {
-
-  let room = ROOMS.subject[id];
+  let room = ROOMS[id];
   let flag = true;
 
   if (typeof room == "undefined") {
@@ -111,8 +90,8 @@ const JOIN_ROOM = function (socket, id, password) {
 
   LEAVE_ROOM(socket);
   socket.join(id);
-  ROOMS.get(`${id}.users`).push(socket.id);
-  ROOMS.set(`${id}.points.${socket.id}`, 0);
+  ROOMS[id].addUser(socket);
+  UPDATE_ROOMS()
 
   return true;
 };
@@ -127,14 +106,11 @@ const LEAVE_ROOM = function (socket) {
   for (let room of rooms) {
     for (let user of room.users) {
       if (user == socket.id) {
-        if (room.painter == socket.id) {
-          room.stopRound();
-          CHAT.sendServerMessage(room.id, `Painter (${socket.name}) left the game, choosing another painter...`);
+        let isEmpty = ROOMS[room.id].removeUser(socket);
+        if (isEmpty) {
+          delete ROOMS[room.id];
         }
-        ROOMS.get(`${room.id}.users`).splice(
-          ROOMS.subject[room.id].users.indexOf(socket.id),
-          1
-        );
+        UPDATE_ROOMS()
         socket.leave(room.id);
       }
     }
@@ -157,8 +133,10 @@ const GET_SOCKET_ROOM = function (socket) {
 
 const GIVE_POINTS = function (socket) {
   let room = GET_SOCKET_ROOM(socket);
-  ROOMS.set(`${room.id}.points.${socket.id}`, ROOMS.subject[room.id].points[socket.id] + 1);
-}
+  if (room) {
+    room.givePoints(socket)
+  }
+};
 
 module.exports = {
   createRoom: CREATE_ROOM,
@@ -167,5 +145,5 @@ module.exports = {
   joinRoom: JOIN_ROOM,
   leaveRoom: LEAVE_ROOM,
   getSocketRoom: GET_SOCKET_ROOM,
-  givePoints: GIVE_POINTS
+  givePoints: GIVE_POINTS,
 };
