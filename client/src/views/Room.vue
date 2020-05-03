@@ -253,16 +253,22 @@ export default {
       }
     },
     receive_message(msgObj) {
-      this.messages.push(msgObj);
-      this.scrollChat();
+      if (msgObj && msgObj.msg && msgObj.msg.length) {
+        this.messages.push(msgObj);
+        this.scrollChat();
+      }
     },
     receive_server_message(msg) {
-      this.messages.push({ sender: "server", msg });
-      this.scrollChat();
+      if (msg && msg.length) {
+        this.messages.push({ sender: "server", msg });
+        this.scrollChat();
+      }
     },
     receive_callback(msg) {
-      this.messages.push({ sender: "server", msg });
-      this.scrollChat();
+      if (msg && msg.length) {
+        this.messages.push({ sender: "server", msg });
+        this.scrollChat();
+      }
     },
     receive_password(password) {
       this.password = password;

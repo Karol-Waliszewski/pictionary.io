@@ -1,18 +1,19 @@
 class ROUND {
   constructor(word) {
-    this.word = this.splitWord(this.simplifyWord(word));
+    this.word = word;
+    this.simplified = this.splitWord(this.simplifyWord(word))
     this.clock = null;
     this.lineHistory = [];
   }
 
   check(word) {
     let prompted = this.splitWord(this.simplifyWord(word));
-    if (this.word.length != prompted.length) return false;
+    if (this.simplified.length != prompted.length) return false;
 
     let flag = true;
 
     for (let w of prompted) {
-      if (!this.word.includes(w)) {
+      if (!this.simplified.includes(w)) {
         flag = false;
       }
     }
@@ -29,14 +30,14 @@ class ROUND {
     let counter = 0;
 
     for (let p of prompted) {
-      for (let w of this.word) {
-        if (w.includes(p)) {
+      for (let w of this.simplified) {
+        if (w.includes(p) || p.includes(w)) {
           counter++;
         }
       }
     }
 
-    return counter >= this.word.length / 3;
+    return counter >= this.simplified.length / 3;
   }
 
   simplifyWord(word) {
