@@ -2,27 +2,34 @@
   <div class="section-xs container">
     <div class="columns is-multiline">
       <div class="column is-full">
-        <h1 class="title is-2 has-text-centered" v-if="room">{{room.name.toUpperCase()}}</h1>
-        <h2
-          v-if="room"
-          class="subtitle is-4 has-text-centered"
-        >{{parseInt(time/60)}}:{{(time%60 <= 9) ? "0"+time%60 : time%60}}</h2>
+        <h1 class="title is-2 has-text-centered" v-if="room">
+          {{ room.name.toUpperCase() }}
+        </h1>
+        <h2 v-if="room" class="subtitle is-4 has-text-centered">
+          {{ parseInt(time / 60) }}:{{
+            time % 60 <= 9 ? "0" + (time % 60) : time % 60
+          }}
+        </h2>
       </div>
 
       <div class="column is-3">
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title">Players: {{users.length}}</p>
+            <p class="card-header-title">Players: {{ users.length }}</p>
           </header>
           <div class="card-content">
             <ul class="content playerlist" v-if="showUsers">
-              <li v-for="user in sortedUsers" :key="user.id" v-if="painter == user.id">
-                <strong>{{user.name}} ✏️</strong> :
-                <span class="has-text-weight-bold">{{user.points}}</span>
+              <li
+                v-for="user in sortedUsers"
+                :key="user.id"
+                v-if="painter == user.id"
+              >
+                <strong>{{ user.name }} ✏️</strong> :
+                <span class="has-text-weight-bold">{{ user.points }}</span>
               </li>
               <li :key="user.id" v-else>
-                {{user.name}} :
-                <span class="has-text-weight-bold">{{user.points}}</span>
+                {{ user.name }} :
+                <span class="has-text-weight-bold">{{ user.points }}</span>
               </li>
             </ul>
           </div>
@@ -30,21 +37,34 @@
             <router-link
               to="/rooms"
               class="card-footer-item has-text-danger is-hoverable"
-            >Leave Room</router-link>
+              >Leave Room</router-link
+            >
           </footer>
         </div>
 
-        <div class="card card--painter" v-if="iDraw && !roundStarted && words.length > 0">
+        <div
+          class="card card--painter"
+          v-if="iDraw && !roundStarted && words.length > 0"
+        >
           <header class="card-header">
             <div class="card-header-title">
               <p>Choose next password</p>
-              <span>{{wordTime}}s</span>
+              <span>{{ wordTime }}s</span>
             </div>
           </header>
           <div class="card-content">
             <ul class="content">
               <li v-for="word in words" :key="word">
-                <button class="button is-fullwidth is-word" @click="()=>{chooseWord(word)}">{{word}}</button>
+                <button
+                  class="button is-fullwidth is-word"
+                  @click="
+                    () => {
+                      chooseWord(word);
+                    }
+                  "
+                >
+                  {{ word }}
+                </button>
               </li>
             </ul>
           </div>
@@ -57,12 +77,12 @@
             </div>
           </header>
           <div class="card-content">
-            <p class="content">{{password}}</p>
+            <p class="content">{{ password }}</p>
           </div>
         </div>
       </div>
 
-      <whiteboard :iDraw="iDraw"/>
+      <whiteboard :iDraw="iDraw" />
 
       <div class="column is-3" id="chat">
         <div class="card chat">
@@ -71,15 +91,20 @@
           </header>
           <div class="chat-body" ref="chat">
             <ul class="chat-messages">
-              <li v-for="message in messages" :key="message.id" class="chat-message">
+              <li
+                v-for="message in messages"
+                :key="message.id"
+                class="chat-message"
+              >
                 <span
                   class="has-text-weight-bold"
-                  v-if="message.sender !='server'"
-                >{{message.sender}}:</span>
-                <span v-if="message.sender =='server'">
-                  <strong>{{message.msg}}</strong>
+                  v-if="message.sender != 'server'"
+                  >{{ message.sender }}:</span
+                >
+                <span v-if="message.sender == 'server'">
+                  <strong>{{ message.msg }}</strong>
                 </span>
-                <span v-else>{{" " + message.msg}}</span>
+                <span v-else>{{ " " + message.msg }}</span>
               </li>
             </ul>
           </div>
@@ -91,10 +116,14 @@
                   class="input is-borderless"
                   type="text"
                   placeholder="Send a message..."
-                >
+                />
               </div>
               <div class="control">
-                <input type="submit" class="button is-primary is-borderless" value="Send">
+                <input
+                  type="submit"
+                  class="button is-primary is-borderless"
+                  value="Send"
+                />
               </div>
             </form>
           </footer>
@@ -122,7 +151,7 @@ export default {
       password: null,
       roundStarted: false,
       time: 0,
-      wordTime: 0
+      wordTime: 0,
     };
   },
   components: { Whiteboard },
@@ -144,7 +173,7 @@ export default {
       // Joining
       this.$socket.emit("join_room", {
         id: this.$route.params.id,
-        password
+        password,
       });
     },
     getUsers() {
@@ -161,8 +190,8 @@ export default {
         inputPlaceholder: "Your name is...",
         inputAttributes: {
           autocapitalize: "off",
-          autocorrect: "off"
-        }
+          autocorrect: "off",
+        },
       });
 
       return name.value;
@@ -175,8 +204,8 @@ export default {
         inputPlaceholder: "Enter your password",
         inputAttributes: {
           autocapitalize: "off",
-          autocorrect: "off"
-        }
+          autocorrect: "off",
+        },
       });
 
       return password;
@@ -199,7 +228,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.chat.scrollTo(0, this.$refs.chat.scrollHeight);
       });
-    }
+    },
   },
   sockets: {
     receive_users(users) {
@@ -256,14 +285,14 @@ export default {
     },
     countdown_painter(time) {
       this.wordTime = time;
-    }
+    },
   },
   computed: {
     sortedUsers() {
       return this.users.sort((a, b) => {
         return b.points - a.points;
       });
-    }
+    },
   },
   mounted() {
     this.getRoomInfo();
@@ -272,8 +301,8 @@ export default {
     "$route.params.id": function(id) {
       this.messages = [];
       this.getRoomInfo();
-    }
-  }
+    },
+  },
 };
 </script>
 

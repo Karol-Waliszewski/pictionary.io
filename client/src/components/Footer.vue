@@ -3,8 +3,8 @@
     <div class="container">
       <div class="content">
         <p>
-          &copy; Copyright 2019,
-          <a href="https://github.com/Karol-Waliszewski">Karol Waliszewski</a>
+          Created by
+          <a href="https://github.com/Karol-Waliszewski">Karol Waliszewski</a> 👨‍💻
         </p>
       </div>
     </div>

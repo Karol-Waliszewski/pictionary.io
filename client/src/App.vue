@@ -1,8 +1,11 @@
 <template>
-  <div id="app">
-    <navigation @openCreator="openCreator"/>
-    <router-view/>
-    <room-creator :isVisible="isModalVisible" @closeCreator="closeCreator"></room-creator>
+  <div id="app" class="app">
+    <navigation @openCreator="openCreator" />
+    <router-view @openCreator="openCreator" />
+    <room-creator
+      :isVisible="isModalVisible"
+      @closeCreator="closeCreator"
+    ></room-creator>
     <foot></foot>
   </div>
 </template>
@@ -19,7 +22,7 @@ export default {
   components: {
     navigation: Nav,
     foot: Footer,
-    "room-creator": RoomCreator
+    "room-creator": RoomCreator,
   },
   methods: {
     leaveRoom() {
@@ -30,24 +33,25 @@ export default {
     },
     closeCreator() {
       this.$data.isModalVisible = false;
-    }
+    },
   },
   sockets: {
     room_created(id) {
       this.$router.push({ name: "room", params: { id: id } });
-    }
+    },
   },
   watch: {
     async $route(to, from) {
       if (from.name == "room") {
         this.leaveRoom();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">
-#app {
+@import "./styles/variables.scss";
+.app {
   margin: 0;
   position: relative;
   min-height: 100vh;
@@ -56,7 +60,7 @@ export default {
 
 .subtitle {
   a {
-    color: #00d1b2;
+    color: $link;
   }
 }
 
