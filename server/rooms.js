@@ -20,6 +20,8 @@ const CREATE_ROOM = function (socket, options) {
     isPrivate: options.isPrivate || false,
     password: options.password || "",
     maxUsers: options.maxUsers || 8,
+    roundTime: options.roundTime || 120,
+    wordTime: options.wordTime || 25,
     users: [],
     points: {},
     created: true,
@@ -30,7 +32,7 @@ const CREATE_ROOM = function (socket, options) {
   room.addUser(socket);
   socket.join(roomID);
   socket.emit("room_created", roomID);
-  UPDATE_ROOMS()
+  UPDATE_ROOMS();
 
   room.initRound();
 
@@ -51,7 +53,7 @@ const GET_ROOMS = function () {
 
 const UPDATE_ROOMS = function () {
   io.emit("receive_rooms", GET_ROOMS());
-}
+};
 
 const GET_ROOM = function (id) {
   return ROOMS[id];
@@ -91,7 +93,7 @@ const JOIN_ROOM = function (socket, id, password) {
   LEAVE_ROOM(socket);
   socket.join(id);
   ROOMS[id].addUser(socket);
-  UPDATE_ROOMS()
+  UPDATE_ROOMS();
 
   return true;
 };
@@ -110,7 +112,7 @@ const LEAVE_ROOM = function (socket) {
         if (isEmpty) {
           delete ROOMS[room.id];
         }
-        UPDATE_ROOMS()
+        UPDATE_ROOMS();
         socket.leave(room.id);
       }
     }
@@ -134,7 +136,7 @@ const GET_SOCKET_ROOM = function (socket) {
 const GIVE_POINTS = function (socket) {
   let room = GET_SOCKET_ROOM(socket);
   if (room) {
-    room.givePoints(socket)
+    room.givePoints(socket);
   }
 };
 
