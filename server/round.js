@@ -31,13 +31,15 @@ class ROUND {
 
     for (let p of prompted) {
       for (let w of this.simplified) {
-        if (w.includes(p) || p.includes(w)) {
+        if (w.includes(p) || p.includes(w) && w.length > 3 && p.length > 3) {
+          console.log(w)
+          console.log(p)
           counter++;
         }
       }
     }
 
-    return counter >= this.simplified.length / 3;
+    return counter >= this.simplified.length / 2.5;
   }
 
   simplifyWord(word) {
