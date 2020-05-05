@@ -18,9 +18,6 @@
         height="600"
         width="800"
       ></canvas>
-      <footer class="card-footer whiteboard-footer" v-if="iDraw">
-        <button class="button" @click="clearBoard">Clear</button>
-      </footer>
     </div>
     <footer class="card whiteboard-footer" v-if="iDraw">
       <div class="card-header">
@@ -86,9 +83,11 @@ export default {
     },
     drawLine(line) {
       let CTX = this.ctx;
+      let { color, coords } = line;
+      CTX.strokeStyle = color;
       CTX.beginPath();
-      CTX.moveTo(line.prevPos.x, line.prevPos.y);
-      CTX.lineTo(line.currPos.x, line.currPos.y);
+      CTX.moveTo(coords.prevPos.x, coords.prevPos.y);
+      CTX.lineTo(coords.currPos.x, coords.currPos.y);
       CTX.closePath();
       CTX.stroke();
     },
@@ -98,8 +97,9 @@ export default {
 
         if (this.prevPos.x != null && this.prevPos.y != null && this.started) {
           let coords = { prevPos: this.prevPos, currPos: pos };
-          this.$socket.emit("paint", coords);
-          this.drawLine(coords);
+          let paintObj = { color: this.activeColor, coords };
+          this.$socket.emit("paint", paintObj);
+          this.drawLine(paintObj);
         }
         // New previous pos
         this.prevPos.x = pos.x;
