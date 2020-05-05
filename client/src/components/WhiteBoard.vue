@@ -1,11 +1,43 @@
 <template>
   <div class="column is-6">
     <div class="card whiteboard-wrapper">
-      <canvas class="whiteboard" ref="canvas" height="600" width="800" @mousemove="emitLine"></canvas>
-      <footer class="card-footer whiteboard-footer" v-if="iDraw">
-        <button class="button" @click="clearBoard">Clear</button>
-      </footer>
+      <canvas
+        class="whiteboard"
+        ref="canvas"
+        height="600"
+        width="800"
+        @mousemove="emitLine"
+      ></canvas>
     </div>
+    <footer class="card whiteboard-footer" v-if="iDraw">
+      <div class="card-header">
+        <p class="card-header-title">
+          Colors
+        </p>
+        <a href="#" class="card-header-icon" aria-label="more options">
+          <span class="icon">
+            <i class="fas fa-angle-down" aria-hidden="true"></i>
+          </span>
+        </a>
+      </div>
+      <div class="card-content">
+        <div class="columns is-multiline is-mobile">
+          <div class="column" v-for="color in colors" :key="color">
+            <div
+              class="color"
+              :class="{ active: activeColor == color }"
+              :style="{ background: `${color}` }"
+              @click="activeColor = color"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="#" class="card-footer-item" @click.prevent="clearBoard"
+          >Clear the board</a
+        >
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -13,7 +45,22 @@
 export default {
   name: "Whiteboard",
   data() {
-    return { prevPos: { x: null, y: null }, ctx: null, draw: false };
+    return {
+      colors: [
+        "#000",
+        "#95a5a6",
+        "#f1c40f",
+        "#f39c12",
+        "#c0392b",
+        "#8e44ad",
+        "#3498db",
+        "#2ecc71",
+      ],
+      activeColor: "#000",
+      prevPos: { x: null, y: null },
+      ctx: null,
+      draw: false,
+    };
   },
   props: ["iDraw"],
   methods: {
@@ -55,7 +102,7 @@ export default {
         var touch = e.touches[0];
         var mouseEvent = new MouseEvent("mousemove", {
           clientX: touch.clientX,
-          clientY: touch.clientY
+          clientY: touch.clientY,
         });
         //console.log(mouseEvent)
         this.emitLine(mouseEvent);
@@ -68,7 +115,7 @@ export default {
 
       return {
         x: (evt.clientX - rect.left) * scaleX,
-        y: (evt.clientY - rect.top) * scaleY
+        y: (evt.clientY - rect.top) * scaleY,
       };
     },
     addEvents() {
@@ -92,7 +139,7 @@ export default {
       //   this.getTouchPosition,
       //   false
       // );
-    }
+    },
   },
   sockets: {
     paint(coords) {
@@ -112,7 +159,7 @@ export default {
         this.$refs.canvas.width,
         this.$refs.canvas.height
       );
-    }
+    },
   },
   mounted() {
     this.ctx = this.$refs.canvas.getContext("2d");
@@ -120,7 +167,7 @@ export default {
   },
   destroyed() {
     this.removeEvents();
-  }
+  },
 };
 </script>
 <style lang="scss">
@@ -138,8 +185,18 @@ export default {
 }
 
 .whiteboard-footer {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 1rem; */
+}
+
+.color {
+  padding-bottom: 100%;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid lightgray;
+  &.active {
+    border: 1px solid #000;
+  }
 }
 </style>
