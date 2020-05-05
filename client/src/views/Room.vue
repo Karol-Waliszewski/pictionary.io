@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <whiteboard :iDraw="iDraw" />
+      <whiteboard :iDraw="iDraw" :started="roundStarted"/>
 
       <div class="column is-3" id="chat">
         <div class="card chat">

@@ -93,7 +93,7 @@ io.on("connection", socket => {
   socket.on("paint", (coords) => {
     let room = ROOMS.getSocketRoom(socket);
     if (room.painter == socket.id && room.round != null) {
-      io.to(room.id).emit('paint', coords);
+      socket.to(room.id).emit('paint', coords);
       room.round.addLine(coords);
     }
   });
