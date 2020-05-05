@@ -1,7 +1,23 @@
 <template>
   <div class="column is-6">
     <div class="card whiteboard-wrapper">
-      <canvas class="whiteboard" ref="canvas" height="600" width="800" @mousemove="emitLine"></canvas>
+      <canvas
+        v-if="iDraw"
+        class="whiteboard"
+        ref="canvas"
+        height="600"
+        width="800"
+        @mousemove="emitLine"
+        @touchmove="getTouchPosition"
+        @mouseleave="leaveCanvas"
+      ></canvas>
+      <canvas
+        v-else
+        class="whiteboard"
+        ref="canvas"
+        height="600"
+        width="800"
+      ></canvas>
       <footer class="card-footer whiteboard-footer" v-if="iDraw">
         <button class="button" @click="clearBoard">Clear</button>
       </footer>
@@ -15,8 +31,12 @@ export default {
   data() {
     return { prevPos: { x: null, y: null }, ctx: null, draw: false };
   },
-  props: ["iDraw"],
+  props: ["iDraw", "started"],
   methods: {
+    initBoard() {
+      this.ctx = this.$refs.canvas.getContext("2d");
+      this.ctx.lineJoin = "round";
+    },
     clearBoard() {
       this.$socket.emit("clear");
     },
@@ -25,14 +45,17 @@ export default {
       CTX.beginPath();
       CTX.moveTo(line.prevPos.x, line.prevPos.y);
       CTX.lineTo(line.currPos.x, line.currPos.y);
+      CTX.closePath();
       CTX.stroke();
     },
     emitLine(e) {
       if (this.draw && this.iDraw) {
-        let pos = this.getMousePosition(this.$refs.canvas, e);
+        let pos = this.getCanvasPosition(this.$refs.canvas, e);
 
-        if (this.prevPos.x != null && this.prevPos.y != null) {
-          this.$socket.emit("paint", { prevPos: this.prevPos, currPos: pos });
+        if (this.prevPos.x != null && this.prevPos.y != null && this.started) {
+          let coords = { prevPos: this.prevPos, currPos: pos };
+          this.$socket.emit("paint", coords);
+          this.drawLine(coords);
         }
         // New previous pos
         this.prevPos.x = pos.x;
@@ -41,10 +64,13 @@ export default {
     },
     enableDrawing() {
       this.draw = true;
-      //console.log("enable?");
     },
     disableDrawing() {
       this.draw = false;
+      this.prevPos.x = null;
+      this.prevPos.y = null;
+    },
+    leaveCanvas() {
       this.prevPos.x = null;
       this.prevPos.y = null;
     },
@@ -55,20 +81,19 @@ export default {
         var touch = e.touches[0];
         var mouseEvent = new MouseEvent("mousemove", {
           clientX: touch.clientX,
-          clientY: touch.clientY
+          clientY: touch.clientY,
         });
-        //console.log(mouseEvent)
         this.emitLine(mouseEvent);
       }
     },
-    getMousePosition(canvas, evt) {
+    getCanvasPosition(canvas, evt) {
       var rect = canvas.getBoundingClientRect(),
         scaleX = canvas.width / rect.width,
         scaleY = canvas.height / rect.height;
 
       return {
         x: (evt.clientX - rect.left) * scaleX,
-        y: (evt.clientY - rect.top) * scaleY
+        y: (evt.clientY - rect.top) * scaleY,
       };
     },
     addEvents() {
@@ -76,23 +101,22 @@ export default {
       window.addEventListener("touchstart", this.enableDrawing);
       window.addEventListener("mouseup", this.disableDrawing);
       window.addEventListener("touchend", this.disableDrawing);
-      this.$refs.canvas.addEventListener(
-        "touchmove",
-        this.getTouchPosition,
-        false
-      );
     },
     removeEvents() {
       window.removeEventListener("mousedown", this.enableDrawing);
       window.removeEventListener("touchstart", this.enableDrawing);
       window.removeEventListener("mouseup", this.disableDrawing);
       window.removeEventListener("touchend", this.disableDrawing);
-      // this.$refs.canvas.removeEventListener(
-      //   "touchmove",
-      //   this.getTouchPosition,
-      //   false
-      // );
-    }
+    },
+  },
+  watch: {
+    iDraw(value) {
+      if (value) {
+        this.addEvents();
+      } else {
+        this.removeEvents();
+      }
+    },
   },
   sockets: {
     paint(coords) {
@@ -112,15 +136,17 @@ export default {
         this.$refs.canvas.width,
         this.$refs.canvas.height
       );
-    }
+    },
   },
   mounted() {
-    this.ctx = this.$refs.canvas.getContext("2d");
-    this.addEvents();
+    this.initBoard();
+    if (this.iDraw) {
+      this.addEvents();
+    }
   },
   destroyed() {
     this.removeEvents();
-  }
+  },
 };
 </script>
 <style lang="scss">

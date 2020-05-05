@@ -32,8 +32,6 @@ class ROUND {
     for (let p of prompted) {
       for (let w of this.simplified) {
         if (w.includes(p) || p.includes(w) && w.length > 3 && p.length > 3) {
-          console.log(w)
-          console.log(p)
           counter++;
         }
       }
