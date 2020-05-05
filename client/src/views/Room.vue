@@ -48,7 +48,7 @@
         >
           <header class="card-header">
             <div class="card-header-title">
-              <p>Choose next password</p>
+              <p>Choose next word</p> 
               <span>{{ wordTime }}s</span>
             </div>
           </header>
@@ -73,7 +73,7 @@
         <div class="card card--painter" v-if="iDraw && roundStarted">
           <header class="card-header">
             <div class="card-header-title">
-              <p>Your secret password</p>
+              <p>Your secret word</p>
             </div>
           </header>
           <div class="card-content">
