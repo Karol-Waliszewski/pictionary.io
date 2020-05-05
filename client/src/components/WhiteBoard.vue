@@ -20,16 +20,6 @@
       ></canvas>
     </div>
     <footer class="card whiteboard-footer" v-if="iDraw">
-      <div class="card-header">
-        <p class="card-header-title">
-          Colors
-        </p>
-        <a href="#" class="card-header-icon" aria-label="more options">
-          <span class="icon">
-            <i class="fas fa-angle-down" aria-hidden="true"></i>
-          </span>
-        </a>
-      </div>
       <div class="card-content">
         <div class="columns is-multiline is-mobile">
           <div class="column" v-for="color in colors" :key="color">
