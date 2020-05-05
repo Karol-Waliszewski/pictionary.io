@@ -1,23 +1,23 @@
 self.__precacheManifest = [
   {
-    "revision": "df3ca04eff9d72434003",
+    "revision": "f5d0c12dcf4531f025e6",
     "url": "/pictionary.io/css/app.ce668360.css"
   },
   {
-    "revision": "df3ca04eff9d72434003",
-    "url": "/pictionary.io/js/app.59cb21f8.js"
-  },
-  {
-    "revision": "552d111d803fec7e632c",
-    "url": "/pictionary.io/css/chunk-05831d0a.79724f19.css"
-  },
-  {
-    "revision": "552d111d803fec7e632c",
-    "url": "/pictionary.io/js/chunk-05831d0a.6ec4bbb6.js"
+    "revision": "f5d0c12dcf4531f025e6",
+    "url": "/pictionary.io/js/app.87e6d2c6.js"
   },
   {
     "revision": "a67903d629e64f0976a5",
     "url": "/pictionary.io/js/chunk-2d21098f.a76edb36.js"
+  },
+  {
+    "revision": "112bf3f3640b82e76964",
+    "url": "/pictionary.io/css/chunk-36697537.72c32cc2.css"
+  },
+  {
+    "revision": "112bf3f3640b82e76964",
+    "url": "/pictionary.io/js/chunk-36697537.bc7b221b.js"
   },
   {
     "revision": "9d48244176721413567d",
@@ -28,7 +28,7 @@ self.__precacheManifest = [
     "url": "/pictionary.io/js/chunk-vendors.d32f9edd.js"
   },
   {
-    "revision": "1b2695f7a4148e2ae27b6c97cc31081a",
+    "revision": "661e31d6124a54e51136cac2372082db",
     "url": "/pictionary.io/index.html"
   },
   {
