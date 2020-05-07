@@ -18,26 +18,26 @@
         height="600"
         width="800"
       ></canvas>
-    </div>
-    <footer class="card whiteboard-footer" v-if="iDraw">
-      <div class="card-content">
-        <div class="columns is-multiline is-mobile">
-          <div class="column" v-for="color in colors" :key="color">
-            <div
-              class="color"
-              :class="{ active: activeColor == color }"
-              :style="{ background: `${color}` }"
-              @click="activeColor = color"
-            ></div>
+      <footer class="card whiteboard-footer" v-if="iDraw">
+        <div class="card-content">
+          <div class="columns is-multiline is-mobile">
+            <div class="column" v-for="color in colors" :key="color">
+              <div
+                class="color"
+                :class="{ active: activeColor == color }"
+                :style="{ background: `${color}` }"
+                @click="activeColor = color"
+              ></div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="card-footer">
-        <a href="#" class="card-footer-item" @click.prevent="clearBoard"
-          >Clear the board</a
-        >
-      </div>
-    </footer>
+        <div class="card-footer">
+          <a href="#" class="card-footer-item" @click.prevent="clearBoard"
+            >Clear the board</a
+          >
+        </div>
+      </footer>
+    </div>
   </div>
 </template>
 
@@ -48,11 +48,11 @@ export default {
     return {
       colors: [
         "#000",
+        "#654321",
         "#95a5a6",
         "#f1c40f",
         "#f39c12",
         "#c0392b",
-        "#8e44ad",
         "#3498db",
         "#2ecc71",
       ],
@@ -74,12 +74,14 @@ export default {
     drawLine(line) {
       let CTX = this.ctx;
       let { color, coords } = line;
-      CTX.strokeStyle = color;
-      CTX.beginPath();
-      CTX.moveTo(coords.prevPos.x, coords.prevPos.y);
-      CTX.lineTo(coords.currPos.x, coords.currPos.y);
-      CTX.closePath();
-      CTX.stroke();
+      if (coords) {
+        CTX.strokeStyle = color;
+        CTX.beginPath();
+        CTX.moveTo(coords.prevPos.x, coords.prevPos.y);
+        CTX.lineTo(coords.currPos.x, coords.currPos.y);
+        CTX.closePath();
+        CTX.stroke();
+      }
     },
     emitLine(e) {
       if (this.draw && this.iDraw) {
@@ -192,9 +194,12 @@ export default {
 
 .whiteboard {
   width: 100%;
-  max-height: 100%;
+  height: 100%;
   flex: 1;
   // background: palegoldenrod;
+  @media screen and (min-width: 768px) {
+    min-height: 590px;
+  }
 }
 
 .whiteboard-footer {

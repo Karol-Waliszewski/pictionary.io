@@ -1,7 +1,9 @@
 <template>
   <div id="app" class="app">
     <navigation @openCreator="openCreator" />
-    <router-view @openCreator="openCreator" />
+    <div class="main">
+      <router-view @openCreator="openCreator" />
+    </div>
     <room-creator
       :isVisible="isModalVisible"
       @closeCreator="closeCreator"
@@ -55,13 +57,18 @@ export default {
   margin: 0;
   position: relative;
   min-height: 100vh;
-  padding-bottom: 7rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .subtitle {
   a {
     color: $link;
   }
+}
+
+.main {
+  flex: 1;
 }
 
 .section-xs {

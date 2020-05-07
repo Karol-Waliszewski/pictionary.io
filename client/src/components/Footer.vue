@@ -19,9 +19,7 @@ export default {
 
 <style lang="scss" scoped>
 .footer {
-  position: absolute;
   width: 100%;
-  bottom: 0;
   padding-bottom: 3rem;
   text-align: right;
   @media screen and (max-width: 500px) {
