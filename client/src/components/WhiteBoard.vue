@@ -7,6 +7,7 @@
         ref="canvas"
         height="600"
         width="800"
+        :draggable="false"
         @mousemove="emitLine"
         @touchmove="getTouchPosition"
         @mouseleave="leaveCanvas"
@@ -17,6 +18,7 @@
         ref="canvas"
         height="600"
         width="800"
+        :draggable="false"
       ></canvas>
       <footer class="card whiteboard-footer" v-if="iDraw">
         <div class="card-content">

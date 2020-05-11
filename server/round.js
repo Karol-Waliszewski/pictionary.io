@@ -31,7 +31,7 @@ class ROUND {
 
     for (let p of prompted) {
       for (let w of this.simplified) {
-        if (w.includes(p) || p.includes(w) && w.length > 3 && p.length > 3) {
+        if (w.includes(p) && w.length > 3 && p.length > 3) {
           counter++;
         }
       }
