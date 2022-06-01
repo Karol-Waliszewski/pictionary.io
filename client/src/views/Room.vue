@@ -5,9 +5,9 @@
         <h1 class="title is-2 has-text-centered" v-if="room">
           {{ room.name.toUpperCase() }}
         </h1>
-        <h2 v-if="room" class="subtitle is-4 has-text-centered">
+        <p v-if="room" class="subtitle is-4 has-text-centered">
           {{ convertTime(time) }}
-        </h2>
+        </p>
       </div>
 
       <div class="column is-3">
@@ -17,16 +17,9 @@
           </header>
           <div class="card-content">
             <ul class="content playerlist" v-if="showUsers">
-              <li
-                v-for="user in sortedUsers"
-                :key="user.id"
-                v-if="painter == user.id"
-              >
-                <strong>{{ user.name }} ✏️</strong> :
-                <span class="has-text-weight-bold">{{ user.points }}</span>
-              </li>
-              <li :key="user.id" v-else>
-                {{ user.name }} :
+              <li v-for="user in sortedUsers" :key="user.id">
+                <b v-if="painter == user.id">{{ user.name }} ✏️</b>
+                <fragment v-else>{{ user.name }}</fragment> :
                 <span class="has-text-weight-bold">{{ user.points }}</span>
               </li>
             </ul>
@@ -83,49 +76,7 @@
       <whiteboard :iDraw="iDraw" :started="roundStarted" />
 
       <div class="column is-3" id="chat">
-        <div class="card chat">
-          <header class="card-header">
-            <p class="card-header-title">Chat</p>
-          </header>
-          <div class="chat-body" ref="chat">
-            <ul class="chat-messages">
-              <li
-                v-for="message in messages"
-                :key="message.id"
-                class="chat-message"
-              >
-                <span
-                  class="has-text-weight-bold"
-                  v-if="message.sender != 'server'"
-                  >{{ message.sender }}:</span
-                >
-                <span v-if="message.sender == 'server'">
-                  <strong>{{ message.msg }}</strong>
-                </span>
-                <span v-else>{{ " " + message.msg }}</span>
-              </li>
-            </ul>
-          </div>
-          <footer class="card-footer">
-            <form class="field has-addons chat-input" @submit="sendMessage">
-              <div class="control">
-                <input
-                  v-model="message"
-                  class="input is-borderless"
-                  type="text"
-                  placeholder="Send a message..."
-                />
-              </div>
-              <div class="control">
-                <input
-                  type="submit"
-                  class="button is-primary is-borderless"
-                  value="Send"
-                />
-              </div>
-            </form>
-          </footer>
-        </div>
+        <chat />
       </div>
     </div>
   </div>
@@ -133,6 +84,7 @@
 
 <script>
 import Whiteboard from "../components/WhiteBoard";
+import Chat from "../components/Chat";
 import { convertTime } from "../utils/time";
 
 export default {
@@ -142,8 +94,6 @@ export default {
       users: [],
       showUsers: false,
       room: null,
-      message: "",
-      messages: [],
       painter: null,
       words: [],
       password: null,
@@ -152,7 +102,7 @@ export default {
       wordTime: 0,
     };
   },
-  components: { Whiteboard },
+  components: { Whiteboard, Chat },
   methods: {
     convertTime,
     async joinRoom() {
@@ -220,23 +170,11 @@ export default {
 
       return password;
     },
-    sendMessage(e) {
-      e.preventDefault();
-      if (this.message.length != 0) {
-        this.$socket.emit("send_message", this.message);
-        this.message = "";
-      }
-    },
     chooseWord(word) {
       this.$socket.emit("word_chosen", word);
     },
     setPainter(painter) {
       this.painter = painter;
-    },
-    scrollChat() {
-      this.$nextTick(() => {
-        this.$refs.chat.scrollTo(0, this.$refs.chat.scrollHeight);
-      });
     },
   },
   sockets: {
@@ -259,24 +197,6 @@ export default {
       } else {
         this.$swal({ title: "This room does not exist", type: "error" });
         this.$router.push("/rooms");
-      }
-    },
-    receive_message(msgObj) {
-      if (msgObj && msgObj.msg && msgObj.msg.length) {
-        this.messages.push(msgObj);
-        this.scrollChat();
-      }
-    },
-    receive_server_message(msg) {
-      if (msg && msg.length) {
-        this.messages.push({ sender: "server", msg });
-        this.scrollChat();
-      }
-    },
-    receive_callback(msg) {
-      if (msg && msg.length) {
-        this.messages.push({ sender: "server", msg });
-        this.scrollChat();
       }
     },
     receive_password(password) {
@@ -316,8 +236,7 @@ export default {
     this.getRoomInfo();
   },
   watch: {
-    "$route.params.id": function (id) {
-      this.messages = [];
+    "$route.params.id": function () {
       this.getRoomInfo();
     },
   },
@@ -325,43 +244,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.is-borderless {
-  border-radius: 0;
-  border: 0;
-  box-shadow: 0;
-}
-
 .playerlist {
   text-align: left;
-}
-
-.chat-body {
-  height: 500px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  @media screen and (max-width: 670px) {
-    height: 200px;
-  }
-}
-
-.chat-messages {
-  list-style-type: none;
-}
-
-.chat-message {
-  text-align: left;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
-  word-break: break-all;
-}
-
-.chat-input {
-  display: flex;
-  justify-content: stretch;
-  width: 100%;
-  .control:first-child {
-    flex: 1;
-  }
 }
 
 .card--painter {
