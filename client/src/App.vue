@@ -28,10 +28,10 @@ export default {
       this.$socket.emit("leave_room");
     },
     openCreator() {
-      this.$data.isModalVisible = true;
+      this.isModalVisible = true;
     },
     closeCreator() {
-      this.$data.isModalVisible = false;
+      this.isModalVisible = false;
     },
   },
   sockets: {
