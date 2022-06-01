@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: "pictionary.io/",
+  publicPath: "/",
   pwa: {
     serviceWorker: false,
   },
