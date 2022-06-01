@@ -6,9 +6,7 @@
           {{ room.name.toUpperCase() }}
         </h1>
         <h2 v-if="room" class="subtitle is-4 has-text-centered">
-          {{ parseInt(time / 60) }}:{{
-            time % 60 <= 9 ? "0" + (time % 60) : time % 60
-          }}
+          {{ convertTime(time) }}
         </h2>
       </div>
 
@@ -48,7 +46,7 @@
         >
           <header class="card-header">
             <div class="card-header-title">
-              <p>Choose next word</p> 
+              <p>Choose next word</p>
               <span>{{ wordTime }}s</span>
             </div>
           </header>
@@ -82,7 +80,7 @@
         </div>
       </div>
 
-      <whiteboard :iDraw="iDraw" :started="roundStarted"/>
+      <whiteboard :iDraw="iDraw" :started="roundStarted" />
 
       <div class="column is-3" id="chat">
         <div class="card chat">
@@ -135,6 +133,7 @@
 
 <script>
 import Whiteboard from "../components/WhiteBoard";
+import { convertTime } from "../utils/time";
 
 export default {
   name: "About",
@@ -147,7 +146,6 @@ export default {
       messages: [],
       painter: null,
       words: [],
-      iDraw: false,
       password: null,
       roundStarted: false,
       time: 0,
@@ -156,6 +154,7 @@ export default {
   },
   components: { Whiteboard },
   methods: {
+    convertTime,
     async joinRoom() {
       // Getting Password
       let password = "";
@@ -183,18 +182,29 @@ export default {
       this.$socket.emit("get_room", this.$route.params.id);
     },
     async getName() {
-      const name = await this.$swal({
+      const { value: name } = await this.$swal({
         title: "Enter your name",
         input: "text",
         showCancelButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         inputPlaceholder: "Your name is...",
         inputAttributes: {
           autocapitalize: "off",
           autocorrect: "off",
         },
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value !== "") {
+              resolve();
+            } else {
+              resolve("You need to enter the name");
+            }
+          });
+        },
       });
 
-      return name.value;
+      return name;
     },
     async getPassword() {
       const { value: password } = await this.$swal({
@@ -222,7 +232,6 @@ export default {
     },
     setPainter(painter) {
       this.painter = painter;
-      this.iDraw = painter == this.$socket.id;
     },
     scrollChat() {
       this.$nextTick(() => {
@@ -299,12 +308,15 @@ export default {
         return b.points - a.points;
       });
     },
+    iDraw() {
+      return this.painter == this.$socket.id;
+    },
   },
   mounted() {
     this.getRoomInfo();
   },
   watch: {
-    "$route.params.id": function(id) {
+    "$route.params.id": function (id) {
       this.messages = [];
       this.getRoomInfo();
     },

@@ -4,11 +4,8 @@
     <div class="main">
       <router-view @openCreator="openCreator" />
     </div>
-    <room-creator
-      :isVisible="isModalVisible"
-      @closeCreator="closeCreator"
-    ></room-creator>
-    <foot></foot>
+    <room-creator :isVisible="isModalVisible" @closeCreator="closeCreator" />
+    <foot />
   </div>
 </template>
 <script>
@@ -19,7 +16,7 @@ import RoomCreator from "./components/RoomCreator.vue";
 export default {
   name: "App",
   data() {
-    return { users: [], isModalVisible: false, name: null };
+    return { isModalVisible: false };
   },
   components: {
     navigation: Nav,
@@ -43,7 +40,7 @@ export default {
     },
   },
   watch: {
-    async $route(to, from) {
+    async $route(_, from) {
       if (from.name == "room") {
         this.leaveRoom();
       }
@@ -51,6 +48,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 @import "./styles/variables.scss";
 .app {
@@ -69,6 +67,7 @@ export default {
 
 .main {
   flex: 1;
+  padding-bottom: 2rem;
 }
 
 .section-xs {
