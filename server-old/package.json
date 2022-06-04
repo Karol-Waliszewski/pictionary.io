@@ -1,0 +1,22 @@
+{
+  "name": "pictionary.io-server",
+  "version": "0.0.1",
+  "description": "Server for self-made pictionary game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "puns"
+  ],
+  "author": "Karol Waliszewski",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0",
+    "uniqid": "^5.0.3"
+  }
+}
