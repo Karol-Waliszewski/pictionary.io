@@ -8,7 +8,6 @@
                 </div>
                 <p class="help is-danger" v-if="errors['name']">You have to enter the name.</p>
             </div>
-
             <div class="field column is-6">
                 <label class="label">Password</label>
                 <div class="control">
@@ -16,7 +15,6 @@
                 </div>
                 <p class="help is-danger" v-if="errors['password']">Minimum password length is 3</p>
             </div>
-
             <div class="field column is-6">
                 <label class="label">Max Players</label>
                 <div class="control">
@@ -24,7 +22,6 @@
                 </div>
                 <p class="help is-danger" v-if="errors['users']">Minimum users quantity is 2</p>
             </div>
-
             <div class="column is-6">
                 <label class="label">Round time</label>
                 <div class="field has-addons">
@@ -37,7 +34,6 @@
                 </div>
                 <p class="help is-danger" v-if="errors['round']">Minimum time for a round is 30 seconds.</p>
             </div>
-
             <div class="column is-6">
                 <label class="label">Word choosing time</label>
                 <div class="field has-addons">
@@ -50,7 +46,6 @@
                 </div>
                 <p class="help is-danger" v-if="errors['word']">Minimum time for choosing a word is 10 seconds.</p>
             </div>
-
             <div class="field column is-12">
                 <div class="control">
                     <switches v-model="isPrivate" text-enabled="The room is private" text-disabled="The room is public" theme="bulma" color="default"></switches>

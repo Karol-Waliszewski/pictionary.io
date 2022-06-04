@@ -126,23 +126,16 @@ export default {
     },
     watch: {
         iDraw(value) {
-            if (value) {
-                this.addEvents()
-            } else {
-                this.removeEvents()
-            }
+            if (value) this.addEvents()
+            else this.removeEvents()
         }
     },
     sockets: {
         paint(coords) {
-            if (coords) {
-                this.drawLine(coords)
-            }
+            if (coords) this.drawLine(coords)
         },
         getPainting(lines) {
-            for (let line of lines) {
-                this.drawLine(line)
-            }
+            lines.forEach(line => this.drawLine(line))
         },
         clear() {
             this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height)
@@ -150,9 +143,7 @@ export default {
     },
     mounted() {
         this.initBoard()
-        if (this.iDraw) {
-            this.addEvents()
-        }
+        if (this.iDraw) this.addEvents()
     },
     unmounted() {
         this.removeEvents()

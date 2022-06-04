@@ -32,7 +32,7 @@
 
 <script>
 export default {
-    name: 'homepage',
+    name: 'Home',
     methods: {
         openCreator() {
             this.$emit('openCreator')
@@ -44,5 +44,6 @@ export default {
 <style lang="scss" scoped>
 .button {
     margin: 2% 0;
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>

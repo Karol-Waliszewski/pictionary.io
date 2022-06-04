@@ -5,13 +5,10 @@ import { router } from './router'
 import App from './App.vue'
 import Colors from './styles/variables.scss'
 import './registerServiceWorker'
-
-// Bulma
 import './styles/index.scss'
 
 Vue.config.productionTip = false
 
-// Vue + Socket.io
 Vue.use(
     new VueSocketIO({
         debug: false,
@@ -20,13 +17,11 @@ Vue.use(
     })
 )
 
-// SweetAlert2
 Vue.use(VueSweetAlert, {
     confirmButtonColor: Colors.primary,
     cancelButtonColor: Colors.light
 })
 
-// Initializing
 new Vue({
     router,
     render: h => h(App)

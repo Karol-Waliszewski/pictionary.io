@@ -19,8 +19,8 @@
                         <ul class="content playerlist" v-if="showUsers">
                             <li v-for="user in sortedUsers" :key="user.id">
                                 <b v-if="painter == user.id">{{ user.name }} ✏️</b>
-                                <fragment v-else>{{ user.name }}</fragment> :
-                                <span class="has-text-weight-bold">{{ user.points }}</span>
+                                <span v-else>{{ user.name }}</span>
+                                <span class="points has-text-weight-bold">{{ user.points }}</span>
                             </li>
                         </ul>
                     </div>
@@ -81,7 +81,7 @@ import Chat from '../components/Chat'
 import { convertTime } from '../utils/time'
 
 export default {
-    name: 'About',
+    name: 'Room',
     data() {
         return {
             users: [],
@@ -99,20 +99,17 @@ export default {
     methods: {
         convertTime,
         async joinRoom() {
-            // Getting Password
             let password = ''
 
             if (!this.room.users.includes(this.$socket.id) && this.room.isPrivate) {
                 password = await this.getPassword()
             }
 
-            // Getting Name
-            let name = await this.getName()
+            const name = await this.getName()
             this.$socket.emit('setName', name)
             this.$socket.name = name
             this.showUsers = true
 
-            // Joining
             this.$socket.emit('join_room', {
                 id: this.$route.params.id,
                 password
@@ -125,7 +122,7 @@ export default {
             this.$socket.emit('get_room', this.$route.params.id)
         },
         async getName() {
-            const { value: name } = await this.$swal({
+            const { value } = await this.$swal({
                 title: 'Enter your name',
                 input: 'text',
                 showCancelButton: false,
@@ -138,19 +135,16 @@ export default {
                 },
                 inputValidator: value => {
                     return new Promise(resolve => {
-                        if (value !== '') {
-                            resolve()
-                        } else {
-                            resolve('You need to enter the name')
-                        }
+                        if (value !== '') resolve()
+                        else resolve('You need to enter the name')
                     })
                 }
             })
 
-            return name
+            return value
         },
         async getPassword() {
-            const { value: password } = await this.$swal({
+            const { value } = await this.$swal({
                 title: 'Enter your password',
                 input: 'password',
                 showCancelButton: true,
@@ -161,7 +155,7 @@ export default {
                 }
             })
 
-            return password
+            return value
         },
         chooseWord(word) {
             this.$socket.emit('word_chosen', word)
@@ -217,8 +211,7 @@ export default {
     },
     computed: {
         sortedUsers() {
-            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-            return this.users.sort((a, b) => b.points - a.points)
+            return this.users.slice().sort((a, b) => b.points - a.points)
         },
         iDraw() {
             return this.painter == this.$socket.id
@@ -250,5 +243,9 @@ export default {
 .is-word {
     white-space: normal;
     height: auto;
+}
+
+.points {
+    margin-left: 0.5rem;
 }
 </style>

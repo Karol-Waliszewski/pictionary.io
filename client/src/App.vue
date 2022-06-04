@@ -4,7 +4,7 @@
         <div class="main">
             <router-view @openCreator="openCreator" />
         </div>
-        <room-creator :isVisible="isModalVisible" @closeCreator="closeCreator" />
+        <RoomCreator :isVisible="isModalVisible" @closeCreator="closeCreator" />
         <AppFooter />
     </div>
 </template>
@@ -21,7 +21,7 @@ export default {
     components: {
         AppNav,
         AppFooter,
-        'room-creator': RoomCreator
+        RoomCreator
     },
     methods: {
         leaveRoom() {
@@ -41,9 +41,7 @@ export default {
     },
     watch: {
         async $route(_, from) {
-            if (from.name == 'room') {
-                this.leaveRoom()
-            }
+            if (from.name == 'room') this.leaveRoom()
         }
     }
 }
