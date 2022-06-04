@@ -24,5 +24,6 @@ const routes: Array<RouteConfig> = [
 ]
 
 export const router = new VueRouter({
-    routes
+    routes,
+    mode: 'history'
 })
