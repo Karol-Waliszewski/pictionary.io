@@ -148,7 +148,6 @@ export default {
       let flag = true;
 
       if (roomdata.name.length < 1) {
-        // this.$data.errors.name = true;
         this.$set(this.$data.errors, "name", true);
         flag = false;
       } else {
@@ -157,7 +156,6 @@ export default {
 
       if (roomdata.isPrivate) {
         if (roomdata.password.length < 3) {
-          //this.$data.errors.password = true;
           this.$set(this.$data.errors, "password", true);
           flag = false;
         } else {
@@ -201,11 +199,11 @@ export default {
       this.$emit("closeCreator");
     },
     resetForm() {
-      this.$data.name = "";
-      this.$data.password = "";
-      this.$data.maxUsers = 5;
-      this.$data.isPrivate = false;
-      this.$data.errors = {};
+      this.name = "";
+      this.password = "";
+      this.maxUsers = 5;
+      this.isPrivate = false;
+      this.errors = {};
     },
   },
 };
