@@ -1,0 +1,20 @@
+{
+  "name": "pictionary.io",
+  "short_name": "pictionary.io",
+  "icons": [
+    {
+      "src": "./icons/brush.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/brush.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00d1b2"
+}
