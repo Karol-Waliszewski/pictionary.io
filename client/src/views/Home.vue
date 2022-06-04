@@ -23,9 +23,12 @@
                     </div>
                 </div>
             </div>
-            <button class="button is-primary is-large" @click="openCreator">
-                <strong>Create a room</strong>
-            </button>
+            <div class="buttons-wrapper">
+                <button class="button is-primary is-large" @click="openCreator">
+                    <strong>Create a room</strong>
+                </button>
+                <button class="button is-large" @click="redirectToRooms">Join an existing room</button>
+            </div>
         </section>
     </div>
 </template>
@@ -36,6 +39,9 @@ export default {
     methods: {
         openCreator() {
             this.$emit('openCreator')
+        },
+        redirectToRooms() {
+            this.$router.push({ path: '/rooms' })
         }
     }
 }
@@ -45,5 +51,16 @@ export default {
 .button {
     margin: 2% 0;
     transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.buttons-wrapper {
+    max-width: 250px;
+    width: 100%;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    > button:last-of-type {
+        margin-top: 1rem;
+    }
 }
 </style>

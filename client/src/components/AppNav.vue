@@ -16,6 +16,10 @@
                 <router-link to="/rooms" class="navbar-item">Rooms</router-link>
             </div>
             <div class="navbar-end">
+                <router-link to="/profile" v-if="$auth.isAuthenticated" class="navbar-item">Profile</router-link>
+                <div class="navbar-item">
+                    <AuthButton type="login" />
+                </div>
                 <div class="navbar-item" v-if="!inRoom">
                     <button class="button is-primary" @click="openCreator">
                         <strong>Create a room</strong>
@@ -27,8 +31,10 @@
 </template>
 
 <script>
+import AuthButton from './AuthButton.vue'
 export default {
     name: 'AppNav',
+    components: { AuthButton },
     data() {
         return { inRoom: false, active: false }
     },

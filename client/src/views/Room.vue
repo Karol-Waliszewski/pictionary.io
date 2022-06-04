@@ -122,6 +122,7 @@ export default {
             this.$socket.emit('get_room', this.$route.params.id)
         },
         async getName() {
+            if (this.$auth.user?.nickname) return this.$auth.user?.nickname
             const { value } = await this.$swal({
                 title: 'Enter your name',
                 input: 'text',
