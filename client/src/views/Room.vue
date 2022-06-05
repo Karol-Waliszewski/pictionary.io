@@ -120,7 +120,7 @@ export default {
       this.showUsers = true;
 
       // Joining
-      this.$socket.emit("join_room", {
+      this.$socket.emit("joinRoom", {
         id: this.$route.params.id,
         password,
       });
@@ -129,7 +129,7 @@ export default {
       this.$socket.emit("get_users");
     },
     getRoomInfo() {
-      this.$socket.emit("get_room", this.$route.params.id);
+      this.$socket.emit("getRoom", this.$route.params.id);
     },
     async getName() {
       const { value: name } = await this.$swal({
@@ -171,24 +171,24 @@ export default {
       return password;
     },
     chooseWord(word) {
-      this.$socket.emit("word_chosen", word);
+      this.$socket.emit("wordChosen", word);
     },
     setPainter(painter) {
       this.painter = painter;
     },
   },
   sockets: {
-    receive_users(users) {
+    receiveUsers(users) {
       this.users = users;
     },
-    receive_users_error(msg) {
+    receiveUsers_error(msg) {
       this.$swal({ title: msg, type: "error" });
     },
-    join_room_error(msg) {
+    joinRoom_error(msg) {
       this.$swal({ title: msg, type: "error" });
       this.$router.push("/rooms");
     },
-    receive_room(room) {
+    receiveRoom(room) {
       if (room) {
         this.room = room;
         this.setPainter(room.painter);
@@ -199,26 +199,26 @@ export default {
         this.$router.push("/rooms");
       }
     },
-    receive_password(password) {
+    receivePassword(password) {
       this.password = password;
     },
-    round_initialized(words) {
+    roundInitialized(words) {
       this.words = words;
     },
-    round_started() {
+    roundStarted() {
       this.roundStarted = true;
       this.words = [];
     },
-    round_stopped() {
+    roundStopped() {
       this.roundStarted = false;
     },
-    painter_changed(painter) {
+    painterChanged(painter) {
       this.setPainter(painter);
     },
     countdown(time) {
       this.time = time;
     },
-    countdown_painter(time) {
+    countdownPainter(time) {
       this.wordTime = time;
     },
   },

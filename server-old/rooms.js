@@ -6,7 +6,7 @@ var ROOMS = {};
 const CREATE_ROOM = function (socket, options) {
   if (typeof options.name == "undefined" || options.name.length == 0) {
     let msg = "You have to set a name!";
-    socket.emit("create_room_error", msg);
+    socket.emit("createRoomError", msg);
     return false;
   }
 
@@ -52,7 +52,7 @@ const GET_ROOMS = function () {
 };
 
 const UPDATE_ROOMS = function () {
-  io.emit("receive_rooms", GET_ROOMS());
+  io.emit("receiveRooms", GET_ROOMS());
 };
 
 const GET_ROOM = function (id) {
@@ -64,7 +64,7 @@ const JOIN_ROOM = function (socket, id, password) {
   let flag = true;
 
   if (typeof room == "undefined") {
-    socket.emit("join_room_error", "This room doesn't exist");
+    socket.emit("joinRoom_error", "This room doesn't exist");
     return false;
   }
 
@@ -86,7 +86,7 @@ const JOIN_ROOM = function (socket, id, password) {
 
   if (!flag) {
     //console.error(msg);
-    socket.emit("join_room_error", msg);
+    socket.emit("joinRoom_error", msg);
     return false;
   }
 

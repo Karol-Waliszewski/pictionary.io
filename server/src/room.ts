@@ -1,9 +1,37 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
+import axios from "axios";
+import cheerio from "cheerio";
 const ROUND = require("./round");
 
-class ROOM {
-  constructor(options) {
+export type RoomOptions = {
+  id: string;
+  name: string;
+  isPrivate?: boolean;
+  password?: string;
+  maxUsers?: number;
+  users?: any[];
+
+  roundTime?: number;
+  wordTime?: number;
+  points?: { [key: string]: number };
+};
+
+export class Room {
+  id: RoomOptions["id"];
+  name: RoomOptions["name"];
+  isPrivate: RoomOptions["isPrivate"];
+  password: RoomOptions["password"];
+  maxUsers: RoomOptions["maxUsers"];
+  users: RoomOptions["users"];
+  queue: RoomOptions["users"];
+  roundTime: RoomOptions["roundTime"];
+  wordTime: RoomOptions["wordTime"];
+  points?: RoomOptions["points"];
+
+  painter: any;
+  created: boolean;
+  round: any;
+
+  constructor(options: RoomOptions) {
     this.id = options.id;
     this.name = options.name;
     this.isPrivate = options.isPrivate || false;
@@ -23,24 +51,23 @@ class ROOM {
   }
 
   async getWord() {
-    let word = await axios.get(
-      "http://www.kalambury.org/lib/generate.php?fbclid=IwAR0jEZum7uQ8tSN8ZzpMt3c1ZXwe5KJYYuJRiay2sqyTfx_3pnjyEKAxDL4"
-    );
-    word = cheerio.load(word.data.trim()).text();
+    const html = await axios.get("http://www.kalambury.org/lib/generate.php");
+    const word = cheerio.load(html.data.trim())("div").text().trim();
     return word;
   }
 
   async initRound() {
-    let words = [
-      await this.getWord(),
-      await this.getWord(),
-      await this.getWord(),
-    ];
+    let words = await Promise.all([
+      this.getWord(),
+      this.getWord(),
+      this.getWord(),
+    ]);
+
     this.setPainter();
-    io.to(this.painter).emit("round_initialized", words);
+    io.to(this.painter).emit("roundInitialized", words);
 
     let time = this.wordTime;
-    io.to(this.id).emit("countdown_painter", time);
+    io.to(this.id).emit("countdownPainter", time);
     let interval = setInterval(() => {
       if (this.users.length > 1) {
         if (time <= 0) {
@@ -54,7 +81,7 @@ class ROOM {
           clearInterval(interval);
         }
         time--;
-        if (time >= 0) io.to(this.id).emit("countdown_painter", time);
+        if (time >= 0) io.to(this.id).emit("countdownPainter", time);
       }
     }, 1000);
   }
@@ -81,8 +108,8 @@ class ROOM {
   startRound(word) {
     if (this.users.length > 1) {
       this.round = new ROUND(word);
-      io.to(this.id).emit("round_started");
-      io.to(this.painter).emit("receive_password", word);
+      io.to(this.id).emit("roundStarted");
+      io.to(this.painter).emit("receivePassword", word);
       CHAT.sendServerMessage(this.id, `Round started!`);
       CHAT.sendCallbackID(this.painter, `The secret word is: ${word}`);
       this.countDown(this.roundTime);
@@ -97,7 +124,7 @@ class ROOM {
   stopRound() {
     this.round = null;
     this.clearBoard();
-    io.to(this.id).emit("round_stopped");
+    io.to(this.id).emit("roundStopped");
     CHAT.sendServerMessage(this.id, `Round finished!`);
     io.to(this.id).emit("countdown", 0);
 
@@ -122,7 +149,7 @@ class ROOM {
     } while (this.painter == newPainter);
     this.painter = newPainter;
 
-    io.to(this.id).emit("painter_changed", newPainter);
+    io.to(this.id).emit("painterChanged", newPainter);
     CHAT.sendCallbackID(this.painter, "You are a new painter!");
 
     return true;
@@ -169,7 +196,7 @@ class ROOM {
   }
 
   updateUsers() {
-    io.to(this.id).emit("receive_users", this.getUsers());
+    io.to(this.id).emit("receiveUsers", this.getUsers());
   }
 
   getUsers() {
@@ -185,4 +212,4 @@ class ROOM {
   }
 }
 
-module.exports = ROOM;
+module.exports = Room;

@@ -1,21 +1,40 @@
-const express = require("express");
-const app = express();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
+import express from "express";
+import { createServer } from "http";
+import { Server, Socket } from "socket.io";
+import {
+  ClientToServerEvents,
+  InnerServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "./services/socket";
+
 const ROOMS = require("./rooms");
 const CHAT = require("./chat");
+
+const app = express();
+const http = createServer(app);
+const io = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InnerServerEvents,
+  SocketData
+>(http);
 
 global.io = io;
 global.CHAT = CHAT;
 
 app.get("/", (req, res) => {
-  res.redirect('https://karol-waliszewski.github.io/charades.io/');
+  res.redirect("https://puns.netlify.app/");
 });
 
-io.on("connection", socket => {
+interface ExtendedSocket extends Socket {
+  name: string;
+}
+
+io.on("connection", (socket) => {
   // Connect
   console.log(`User connected: ${socket.id}`);
-  socket.name = socket.id;
+  (socket as ExtendedSocket).name = socket.id;
 
   // Disconnect
   socket.on("disconnect", () => {
@@ -24,50 +43,49 @@ io.on("connection", socket => {
   });
 
   // Set socket's name
-  socket.on("setName", name => {
-    socket.name = name;
+  socket.on("setName", (name) => {
+    (socket as ExtendedSocket).name = name;
     let room = ROOMS.getSocketRoom(socket);
-    if (room)
-      io.to(room.id).emit('receive_users', room.getUsers());
+    if (room) io.to(room.id).emit("receiveUsers", room.getUsers());
   });
 
   // Creating the room
-  socket.on("create_room", options => {
+  socket.on("createRoom", (options) => {
     ROOMS.createRoom(socket, options);
   });
 
   // Get Room
-  socket.on("get_room", id => {
-    socket.emit("receive_room", ROOMS.getRoom(id));
+  socket.on("getRoom", (id) => {
+    socket.emit("receiveRoom", ROOMS.getRoom(id));
   });
 
   // Joining Room
-  socket.on("join_room", data => {
+  socket.on("joinRoom", (data) => {
     if (ROOMS.joinRoom(socket, data.id, data.password)) {
-      CHAT.sendServerMessage(data.id, `${socket.name} has joined the game!`);
+      CHAT.sendServerMessage(data.id, `${(socket as ExtendedSocket).name} has joined the game!`);
       let room = ROOMS.getRoom(data.id);
       if (room.round != null) {
-        socket.emit('getPainting', ROOMS.getRoom(data.id).round.lineHistory);
+        socket.emit("getPainting", ROOMS.getRoom(data.id).round.lineHistory);
       }
     }
   });
 
   // Leaving Room
-  socket.on("leave_room", () => {
+  socket.on("leaveRoom", () => {
     ROOMS.leaveRoom(socket);
   });
 
   // Getting Rooms
-  socket.on("get_rooms", () => {
-    socket.emit("receive_rooms", ROOMS.getRooms());
+  socket.on("getRooms", () => {
+    socket.emit("receiveRooms", ROOMS.getRooms());
   });
 
-  socket.on("send_message", msg => {
+  socket.on("sendMessage", (msg) => {
     let room = ROOMS.getSocketRoom(socket);
     if (room) {
       CHAT.sendMessage(room.id, {
         msg,
-        sender: socket.name
+        sender: (socket as ExtendedSocket).name,
       });
 
       if (room.round != null && socket.id != room.painter) {
@@ -76,13 +94,13 @@ io.on("connection", socket => {
           ROOMS.givePoints(socket);
           CHAT.sendCallback(socket, {
             self: `Congratulations! You've guessed the word!`,
-            broadcast: `${socket.name} guessed the word (${room.round.word}) and earned 1 point!`
+            broadcast: `${(socket as ExtendedSocket).name} guessed the word (${room.round.word}) and earned 1 point!`,
           });
           room.stopRound();
         } else {
           if (room.round.isClose(msg)) {
             CHAT.sendCallback(socket, {
-              self: `You're so close!`
+              self: `You're so close!`,
             });
           }
         }
@@ -93,7 +111,7 @@ io.on("connection", socket => {
   socket.on("paint", (coords) => {
     let room = ROOMS.getSocketRoom(socket);
     if (room.painter == socket.id && room.round != null) {
-      socket.to(room.id).emit('paint', coords);
+      socket.to(room.id).emit("paint", coords);
       room.round.addLine(coords);
     }
   });
@@ -105,7 +123,7 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("word_chosen", word => {
+  socket.on("wordChosen", (word) => {
     let room = ROOMS.getSocketRoom(socket);
     if (room.painter == socket.id && room.round == null) {
       room.startRound(word);

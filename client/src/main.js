@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueSocketIO from "vue-socket.io";
+import SocketIO from "socket.io-client";
 import VueSweetAlert from "vue-sweetalert2";
 import router from "./router.js";
 import App from "./App.vue";
@@ -15,8 +16,13 @@ Vue.config.productionTip = false;
 Vue.use(
   new VueSocketIO({
     debug: false,
-    connection: "https://charadesio.herokuapp.com/",
-    //connection: "http://localhost:5050",
+    // connection: "https://charadesio.herokuapp.com/",
+    connection: SocketIO("http://localhost:3000", {
+      secure: false,
+      withCredentials: false,
+      rejectUnauthorized: false,
+      transports: ["websocket"],
+    }),
   })
 );
 

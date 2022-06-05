@@ -7,7 +7,7 @@ var ROOMS = {}
 export const createRoom = (socket, options) => {
     if (typeof options.name == 'undefined' || options.name.length == 0) {
         let msg = 'You have to set a name!'
-        socket.emit('create_room_error', msg)
+        socket.emit('createRoomError', msg)
         return false
     }
 
@@ -53,7 +53,7 @@ export const getRooms = () => {
     return rooms
 }
 
-export const updateRooms = () => io.emit('receive_rooms', getRooms())
+export const updateRooms = () => io.emit('receiveRooms', getRooms())
 
 export const getRoom = (roomId: string) => ROOMS[roomId]
 
@@ -62,7 +62,7 @@ export const joinRoom = function (socket, id, password) {
     let flag = true
 
     if (typeof room == 'undefined') {
-        socket.emit('join_room_error', "This room doesn't exist")
+        socket.emit('joinRoom_error', "This room doesn't exist")
         return false
     }
 
@@ -84,7 +84,7 @@ export const joinRoom = function (socket, id, password) {
 
     if (!flag) {
         //console.error(msg);
-        socket.emit('join_room_error', msg)
+        socket.emit('joinRoom_error', msg)
         return false
     }
 

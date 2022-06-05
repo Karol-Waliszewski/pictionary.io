@@ -48,7 +48,7 @@ export default {
     sendMessage(e) {
       e.preventDefault();
       if (this.message.length != 0) {
-        this.$socket.emit("send_message", this.message);
+        this.$socket.emit("sendMessage", this.message);
         this.resetMessage();
       }
     },
@@ -65,19 +65,19 @@ export default {
     },
   },
   sockets: {
-    receive_message(msgObj) {
+    receiveMessage(msgObj) {
       if (msgObj && msgObj.msg && msgObj.msg.length) {
         this.messages.push(msgObj);
         this.scrollChat();
       }
     },
-    receive_server_message(msg) {
+    receiveServerMessage(msg) {
       if (msg && msg.length) {
         this.messages.push({ sender: "server", msg });
         this.scrollChat();
       }
     },
-    receive_callback(msg) {
+    receiveCallback(msg) {
       if (msg && msg.length) {
         this.messages.push({ sender: "server", msg });
         this.scrollChat();

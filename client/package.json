@@ -11,11 +11,11 @@
   "dependencies": {
     "bulma": "^0.7.2",
     "register-service-worker": "^1.5.2",
-    "socket.io-client": "^2.2.0",
+    "socket.io-client": "^2.2.1",
     "vue": "^2.5.21",
     "vue-bulma-modal": "^2.0.0-alpha.2",
     "vue-router": "^3.0.2",
-    "vue-socket.io": "^3.0.4",
+    "vue-socket.io": "^3.0.10",
     "vue-sweetalert2": "^1.6.4",
     "vue-switches": "^2.0.1"
   },

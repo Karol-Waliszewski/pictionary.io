@@ -2,22 +2,22 @@ const createID = require("uniqid");
 
 const SEND_MESSAGE = function(roomID, messageObject) {
   io.to(roomID).emit(
-    "receive_message",
+    "receiveMessage",
     Object.assign(messageObject, { id: createID() })
   );
 };
 
 const SEND_SERVER_MESSAGE = function(roomID, message) {
-  io.to(roomID).emit("receive_server_message", message);
+  io.to(roomID).emit("receiveServerMessage", message);
 };
 
 const SEND_CALLBACK = function (socket, callbackObject) {
-  socket.emit("receive_callback", callbackObject.self);
-  socket.broadcast.emit("receive_server_message", callbackObject.broadcast);
+  socket.emit("receiveCallback", callbackObject.self);
+  socket.broadcast.emit("receiveServerMessage", callbackObject.broadcast);
 };
 
 const SEND_CALLBACK_ID = function (socketID, message) {
-  io.to(socketID).emit("receive_callback", message);
+  io.to(socketID).emit("receiveCallback", message);
 };
 
 module.exports = {

@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     leaveRoom() {
-      this.$socket.emit("leave_room");
+      this.$socket.emit("leaveRoom");
     },
     openCreator() {
       this.isModalVisible = true;

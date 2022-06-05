@@ -28,21 +28,21 @@ io.on("connection", socket => {
     socket.name = name;
     let room = ROOMS.getSocketRoom(socket);
     if (room)
-      io.to(room.id).emit('receive_users', room.getUsers());
+      io.to(room.id).emit('receiveUsers', room.getUsers());
   });
 
   // Creating the room
-  socket.on("create_room", options => {
+  socket.on("createRoom", options => {
     ROOMS.createRoom(socket, options);
   });
 
   // Get Room
-  socket.on("get_room", id => {
-    socket.emit("receive_room", ROOMS.getRoom(id));
+  socket.on("getRoom", id => {
+    socket.emit("receiveRoom", ROOMS.getRoom(id));
   });
 
   // Joining Room
-  socket.on("join_room", data => {
+  socket.on("joinRoom", data => {
     if (ROOMS.joinRoom(socket, data.id, data.password)) {
       CHAT.sendServerMessage(data.id, `${socket.name} has joined the game!`);
       let room = ROOMS.getRoom(data.id);
@@ -53,16 +53,16 @@ io.on("connection", socket => {
   });
 
   // Leaving Room
-  socket.on("leave_room", () => {
+  socket.on("leaveRoom", () => {
     ROOMS.leaveRoom(socket);
   });
 
   // Getting Rooms
-  socket.on("get_rooms", () => {
-    socket.emit("receive_rooms", ROOMS.getRooms());
+  socket.on("getRooms", () => {
+    socket.emit("receiveRooms", ROOMS.getRooms());
   });
 
-  socket.on("send_message", msg => {
+  socket.on("sendMessage", msg => {
     let room = ROOMS.getSocketRoom(socket);
     if (room) {
       CHAT.sendMessage(room.id, {
@@ -105,7 +105,7 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("word_chosen", word => {
+  socket.on("wordChosen", word => {
     let room = ROOMS.getSocketRoom(socket);
     if (room.painter == socket.id && room.round == null) {
       room.startRound(word);

@@ -1,4 +1,9 @@
 class ROUND {
+  word: string;
+  simplified: string[];
+  clock: number;
+  lineHistory: any;
+
   constructor(word) {
     this.word = word;
     this.simplified = this.splitWord(this.simplifyWord(word))
@@ -6,7 +11,7 @@ class ROUND {
     this.lineHistory = [];
   }
 
-  check(word) {
+  check(word: string) {
     let prompted = this.splitWord(this.simplifyWord(word));
     if (this.simplified.length != prompted.length) return false;
 
@@ -21,7 +26,7 @@ class ROUND {
     return flag;
   }
 
-  isClose(word) {
+  isClose(word: string) {
     if (word.length < 3) {
       return false;
     }
@@ -40,7 +45,7 @@ class ROUND {
     return counter >= this.simplified.length / 2.5;
   }
 
-  simplifyWord(word) {
+  simplifyWord(word: string) {
     return word
       .toLowerCase()
       .replace(/\s{2,}/g, " ")
@@ -49,11 +54,11 @@ class ROUND {
       .replace(/[\u0300-\u036f]/g, "");
   }
 
-  splitWord(word) {
+  splitWord(word: string) {
     return word.split(" ").filter((el) => el.length);
   }
 
-  addLine(line) {
+  addLine(line: any) {
     this.lineHistory.push(line);
   }
 

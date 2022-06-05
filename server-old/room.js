@@ -37,10 +37,10 @@ class ROOM {
       await this.getWord(),
     ];
     this.setPainter();
-    io.to(this.painter).emit("round_initialized", words);
+    io.to(this.painter).emit("roundInitialized", words);
 
     let time = this.wordTime;
-    io.to(this.id).emit("countdown_painter", time);
+    io.to(this.id).emit("countdownPainter", time);
     let interval = setInterval(() => {
       if (this.users.length > 1) {
         if (time <= 0) {
@@ -54,7 +54,7 @@ class ROOM {
           clearInterval(interval);
         }
         time--;
-        if (time >= 0) io.to(this.id).emit("countdown_painter", time);
+        if (time >= 0) io.to(this.id).emit("countdownPainter", time);
       }
     }, 1000);
   }
@@ -81,8 +81,8 @@ class ROOM {
   startRound(word) {
     if (this.users.length > 1) {
       this.round = new ROUND(word);
-      io.to(this.id).emit("round_started");
-      io.to(this.painter).emit("receive_password", word);
+      io.to(this.id).emit("roundStarted");
+      io.to(this.painter).emit("receivePassword", word);
       CHAT.sendServerMessage(this.id, `Round started!`);
       CHAT.sendCallbackID(this.painter, `The secret word is: ${word}`);
       this.countDown(this.roundTime);
@@ -97,7 +97,7 @@ class ROOM {
   stopRound() {
     this.round = null;
     this.clearBoard();
-    io.to(this.id).emit("round_stopped");
+    io.to(this.id).emit("roundStopped");
     CHAT.sendServerMessage(this.id, `Round finished!`);
     io.to(this.id).emit("countdown", 0);
 
@@ -122,7 +122,7 @@ class ROOM {
     } while (this.painter == newPainter);
     this.painter = newPainter;
 
-    io.to(this.id).emit("painter_changed", newPainter);
+    io.to(this.id).emit("painterChanged", newPainter);
     CHAT.sendCallbackID(this.painter, "You are a new painter!");
 
     return true;
@@ -169,7 +169,7 @@ class ROOM {
   }
 
   updateUsers() {
-    io.to(this.id).emit("receive_users", this.getUsers());
+    io.to(this.id).emit("receiveUsers", this.getUsers());
   }
 
   getUsers() {
