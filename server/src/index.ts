@@ -1,24 +1,21 @@
 import cors from 'cors'
 import express from 'express'
 import { createServer } from 'http'
-import { Server, Socket } from 'socket.io'
-import { ClientToServerEvents, InnerServerEvents, ServerToClientEvents, SocketData } from './services/socket'
+import { Server } from 'socket.io'
+import { ClientToServerEvents, ExtendedSocket, InnerServerEvents, ServerToClientEvents, SocketData } from './services/socket'
+import * as ROOMS from './rooms'
+import * as CHAT from './chat'
 
-const CLIENT_URL = 'http://localhost:8080'
-const PORT = 3000
+const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:8080'
+const PORT = process.env.PORT ?? 3000
 const app = express()
 const httpServer = createServer(app)
 
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 
-app.get('/', (_, res) => {
-  res.json('Hello, backend!')
-})
-
 // app.listen wont work as it creates a new server
 httpServer.listen(PORT || 3000, () => {
-  // eslint-disable-next-line no-console
   console.log(`Backend is running on port: ${PORT}`)
 })
 
@@ -30,13 +27,6 @@ export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerSe
   },
   allowEIO3: true
 })
-
-type ExtendedSocket = Socket & {
-  name: string
-}
-
-const ROOMS = require('./rooms')
-const CHAT = require('./chat')
 
 io.on('connection', socket => {
   // Connect
@@ -52,43 +42,34 @@ io.on('connection', socket => {
   // Set socket's name
   socket.on('setName', name => {
     ;(socket as ExtendedSocket).name = name
-    let room = ROOMS.getSocketRoom(socket)
+    console.log((socket as ExtendedSocket).name)
+    const room = ROOMS.getSocketRoom(socket)
     if (room) io.to(room.id).emit('receiveUsers', room.getUsers())
   })
 
   // Creating the room
-  socket.on('createRoom', options => {
-    ROOMS.createRoom(socket, options)
-  })
+  socket.on('createRoom', options => ROOMS.createRoom(socket, options))
 
   // Get Room
-  socket.on('getRoom', id => {
-    socket.emit('receiveRoom', ROOMS.getRoom(id))
-  })
+  socket.on('getRoom', id => socket.emit('receiveRoom', ROOMS.getRoom(id)))
 
   // Joining Room
   socket.on('joinRoom', data => {
     if (ROOMS.joinRoom(socket, data.id, data.password)) {
       CHAT.sendServerMessage(data.id, `${(socket as ExtendedSocket).name} has joined the game!`)
-      let room = ROOMS.getRoom(data.id)
-      if (room.round != null) {
-        socket.emit('getPainting', ROOMS.getRoom(data.id).round.lineHistory)
-      }
+      const room = ROOMS.getRoom(data.id)
+      if (!!room?.round) socket.emit('getPainting', ROOMS.getRoom(data.id).round.lineHistory)
     }
   })
 
   // Leaving Room
-  socket.on('leaveRoom', () => {
-    ROOMS.leaveRoom(socket)
-  })
+  socket.on('leaveRoom', () => ROOMS.leaveRoom(socket))
 
   // Getting Rooms
-  socket.on('getRooms', () => {
-    socket.emit('receiveRooms', ROOMS.getRooms())
-  })
+  socket.on('getRooms', () => socket.emit('receiveRooms', ROOMS.getRooms()))
 
   socket.on('sendMessage', msg => {
-    let room = ROOMS.getSocketRoom(socket)
+    const room = ROOMS.getSocketRoom(socket)
     if (room) {
       CHAT.sendMessage(room.id, {
         msg,
@@ -116,23 +97,23 @@ io.on('connection', socket => {
   })
 
   socket.on('paint', coords => {
-    let room = ROOMS.getSocketRoom(socket)
-    if (room.painter == socket.id && room.round != null) {
+    const room = ROOMS.getSocketRoom(socket)
+    if (room?.painter == socket.id && room?.round != null) {
       socket.to(room.id).emit('paint', coords)
       room.round.addLine(coords)
     }
   })
 
   socket.on('clear', () => {
-    let room = ROOMS.getSocketRoom(socket)
-    if (room.painter == socket.id && room.round != null) {
+    const room = ROOMS.getSocketRoom(socket)
+    if (room?.painter == socket.id && room?.round != null) {
       room.clearBoard()
     }
   })
 
   socket.on('wordChosen', word => {
-    let room = ROOMS.getSocketRoom(socket)
-    if (room.painter == socket.id && room.round == null) {
+    const room = ROOMS.getSocketRoom(socket)
+    if (room?.painter == socket.id && room?.round == null) {
       room.startRound(word)
     }
   })

@@ -1,4 +1,11 @@
+import { Socket } from 'socket.io'
 import { Room, RoomOptions } from 'src/room'
+
+export type ExtendedSocket = Socket & {
+  name: string
+}
+
+export type Message = { msg: string; sender: string }
 
 // events sent to the client
 export type ServerToClientEvents = {
@@ -15,7 +22,7 @@ export type ServerToClientEvents = {
   clear: () => void
   painterChanged: (painter: any) => void
   getPainting: (lineHistory: any) => void
-  receiveMessage: (message: string) => void
+  receiveMessage: (message: Message & { id: string }) => void
   receiveServerMessage: (message: string) => void
   receiveCallback: (message: string) => void
   anotherDeviceConnected: (message: string) => void

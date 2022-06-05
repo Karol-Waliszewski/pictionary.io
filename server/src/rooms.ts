@@ -1,23 +1,21 @@
 import { genId } from './utils/id'
 import { io } from './index'
 
-const ROOM = require('./room')
+import { Room as ROOM } from './room'
 
-var ROOMS = {}
+var ROOMS: Record<string, ROOM> = {}
 
 export const createRoom = (socket, options) => {
-  if (typeof options.name == 'undefined' || options.name.length == 0) {
-    let msg = 'You have to set a name!'
-    socket.emit('createRoomError', msg)
+  if (typeof options.name === 'undefined' || !options.name.length) {
+    socket.emit('createRoomError', 'You have to set a name!')
     return false
   }
 
   leaveRoom(socket)
 
-  let roomID = genId()
-
-  let room = new ROOM({
-    id: roomID,
+  const roomId = genId()
+  const room = new ROOM({
+    id: roomId,
     name: options.name,
     isPrivate: options.isPrivate || false,
     password: options.password || '',
@@ -29,11 +27,11 @@ export const createRoom = (socket, options) => {
     created: true
   })
 
-  ROOMS[roomID] = room
+  ROOMS[roomId] = room
   socket.name = 'Host'
   room.addUser(socket)
-  socket.join(roomID)
-  socket.emit('room_created', roomID)
+  socket.join(roomId)
+  socket.emit('room_created', roomId)
   updateRooms()
 
   room.initRound()
@@ -42,8 +40,7 @@ export const createRoom = (socket, options) => {
 }
 
 export const getRooms = () => {
-  // return ROOMS.map(r => ({ ...r, id: })) ??
-  const rooms = []
+  const rooms: ROOM[] = []
   for (let room in ROOMS) {
     rooms.push(
       Object.assign(ROOMS[room], {
@@ -58,7 +55,7 @@ export const updateRooms = () => io.emit('receiveRooms', getRooms())
 
 export const getRoom = (roomId: string) => ROOMS[roomId]
 
-export const joinRoom = function (socket, id, password) {
+export const joinRoom = (socket, id, password) => {
   let room = ROOMS[id]
   let flag = true
 
@@ -71,7 +68,7 @@ export const joinRoom = function (socket, id, password) {
     return false // You're already in this room;
   }
 
-  if (room.users.length == room.maxUsers) {
+  if (room.users.length === room.maxUsers) {
     var msg = 'There is max amount of users.'
     flag = false
   }
@@ -97,20 +94,15 @@ export const joinRoom = function (socket, id, password) {
   return true
 }
 
-export const leaveRoom = function (socket) {
-  let rooms = getRooms()
-
-  if (rooms.length == 0) {
-    return false
-  }
+export const leaveRoom = socket => {
+  const rooms = getRooms()
+  if (!rooms.length) return false
 
   for (let room of rooms) {
     for (let user of room.users) {
       if (user == socket.id) {
-        let isEmpty = ROOMS[room.id].removeUser(socket)
-        if (isEmpty) {
-          delete ROOMS[room.id]
-        }
+        const isEmpty = ROOMS[room.id].removeUser(socket)
+        if (isEmpty) delete ROOMS[room.id]
         updateRooms()
         socket.leave(room.id)
       }
@@ -121,6 +113,7 @@ export const leaveRoom = function (socket) {
 }
 
 export const getSocketRoom = socket => {
+  console.log(getRooms())
   for (let room of getRooms()) {
     for (let user of room.users) {
       if (user == socket.id) {
@@ -129,7 +122,7 @@ export const getSocketRoom = socket => {
     }
   }
 
-  return false
+  return null
 }
 
 export const givePoints = socket => {

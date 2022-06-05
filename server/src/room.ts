@@ -2,7 +2,13 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import { io } from '.'
 import * as CHAT from './chat'
-const ROUND = require('./round')
+import { ROUND } from './round'
+
+type User = {
+  id: string
+  points: number
+  name: string
+}
 
 export type RoomOptions = {
   id: string
@@ -10,11 +16,11 @@ export type RoomOptions = {
   isPrivate?: boolean
   password?: string
   maxUsers?: number
-  users?: any[]
-
+  users?: User[]
   roundTime?: number
   wordTime?: number
-  points?: { [key: string]: number }
+  points?: Record<string, number>
+  created?: boolean
 }
 
 export class Room {
@@ -59,14 +65,14 @@ export class Room {
   }
 
   async initRound() {
-    let words = await Promise.all([this.getWord(), this.getWord(), this.getWord()])
+    const words = await Promise.all([this.getWord(), this.getWord(), this.getWord()])
 
     this.setPainter()
     io.to(this.painter).emit('roundInitialized', words)
 
     let time = this.wordTime
     io.to(this.id).emit('countdownPainter', time)
-    let interval = setInterval(() => {
+    const interval = setInterval(() => {
       if (this.users.length > 1) {
         if (time <= 0) {
           CHAT.sendServerMessage(this.id, `Painter didn't chose the word, skipping the round.`)
@@ -83,7 +89,7 @@ export class Room {
 
   countDown(time) {
     io.to(this.id).emit('countdown', time)
-    let interval = setInterval(() => {
+    const interval = setInterval(() => {
       if (time <= 0) {
         CHAT.sendServerMessage(this.id, `No one guessed the word. The word was: ${this.round.word}`)
         this.stopRound()
@@ -122,14 +128,12 @@ export class Room {
   }
 
   clearBoard() {
-    if (this.round != null) {
-      this.round.clearLines()
-    }
+    if (this.round != null) this.round.clearLines()
     io.to(this.id).emit('clear')
   }
 
   setPainter() {
-    if (this.users.length == 0) return false
+    if (!this.users.length) return false
 
     let newPainter
     do {
@@ -173,7 +177,7 @@ export class Room {
     this.updateUsers()
 
     // Return if room is empty
-    return this.users.length == 0 ? true : false
+    return this.users.length === 0
   }
 
   givePoints({ id }, points = 1) {
@@ -186,17 +190,13 @@ export class Room {
   }
 
   getUsers() {
-    let usrs = []
-    for (let user of this.users) {
-      console.log(io.sockets.sockets)
-      usrs.push({
-        id: user,
+    return this.users.map((user: any) => {
+      console.log(io.sockets.sockets[user]?.name, 'name')
+      return {
+        id: user as string,
         points: this.points[user] || 0,
         name: io.sockets.sockets[user]?.name || user
-      })
-    }
-    return usrs
+      }
+    })
   }
 }
-
-module.exports = Room

@@ -1,8 +1,17 @@
-class ROUND {
+type Pos = { x: number; y: number }
+type Line = {
+  color: string
+  coords: {
+    prevPos: Pos
+    currPos: Pos
+  }
+}
+
+export class ROUND {
   word: string
   simplified: string[]
   clock: number
-  lineHistory: any
+  lineHistory: Line[]
 
   constructor(word) {
     this.word = word
@@ -27,11 +36,8 @@ class ROUND {
   }
 
   isClose(word: string) {
-    if (word.length < 3) {
-      return false
-    }
-    let prompted = this.splitWord(this.simplifyWord(word))
-
+    if (word.length < 3) return false
+    const prompted = this.splitWord(this.simplifyWord(word))
     let counter = 0
 
     for (let p of prompted) {
@@ -48,17 +54,17 @@ class ROUND {
   simplifyWord(word: string) {
     return word
       .toLowerCase()
-      .replace(/\s{2,}/g, " ")
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s{2,}/g, ' ')
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
   }
 
   splitWord(word: string) {
-    return word.split(" ").filter(el => el.length)
+    return word.split(' ').filter(el => el.length)
   }
 
-  addLine(line: any) {
+  addLine(line: Line) {
     this.lineHistory.push(line)
   }
 
@@ -66,5 +72,3 @@ class ROUND {
     this.lineHistory = []
   }
 }
-
-module.exports = ROUND
