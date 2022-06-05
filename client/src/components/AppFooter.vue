@@ -5,6 +5,7 @@
                 <p>
                     Created by
                     <a href="https://github.com/Karol-Waliszewski">Karol Waliszewski</a> 👨‍💻
+                    and <a href="https://github.com/kabugh">Jakub Tkaczyk</a> 👨‍💻
                 </p>
             </div>
         </div>
