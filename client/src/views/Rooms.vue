@@ -41,11 +41,11 @@ export default {
     },
     methods: {
         getRooms() {
-            this.$socket.emit('get_rooms')
+            this.$socket.emit('getRooms')
         }
     },
     sockets: {
-        receive_rooms(rooms) {
+        receiveRooms(rooms) {
             this.rooms = rooms
         }
     },

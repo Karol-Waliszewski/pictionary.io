@@ -11,7 +11,7 @@ export default {
     methods: {
         logout() {
             this.$auth.logout()
-            console.log(this.$route.path)
+            // console.log(this.$route.path)
             if (this.$route.path !== '/') this.$router.push({ path: '/' })
         },
         auth() {
