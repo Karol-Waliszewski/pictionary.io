@@ -124,7 +124,7 @@ export default {
                 return false
             }
 
-            this.$socket.emit('create_room', roomdata)
+            this.$socket.emit('createRoom', roomdata)
             this.$emit('closeCreator')
 
             this.resetForm()

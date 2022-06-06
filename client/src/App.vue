@@ -25,7 +25,7 @@ export default {
     },
     methods: {
         leaveRoom() {
-            this.$socket.emit('leave_room')
+            this.$socket.emit('leaveRoom')
         },
         openCreator() {
             this.isModalVisible = true
@@ -35,7 +35,7 @@ export default {
         }
     },
     sockets: {
-        room_created(id) {
+        roomCreated(id) {
             this.$router.push({ name: 'room', params: { id } })
         }
     },
