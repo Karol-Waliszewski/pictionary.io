@@ -4,9 +4,9 @@
   "description": "Server for pictionary game",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "npm run build && node dist/index.js",
     "build": "npx rimraf ./dist && tsc",
-    "start": "npm run build && node dist/index.js",
+    "start": "node dist/index.js",
     "test": "jest ---config ./jest.config.json"
   },
   "keywords": [],

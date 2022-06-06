@@ -10,7 +10,7 @@ import {
 } from "./services/socket";
 import { get } from "./utils/httpHelpers";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 const httpServer = createServer(app);
 
