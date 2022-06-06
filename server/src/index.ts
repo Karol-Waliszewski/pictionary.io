@@ -2,7 +2,7 @@ import cors from 'cors'
 import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { ClientToServerEvents, ExtendedSocket, InnerServerEvents, ServerToClientEvents, SocketData } from './services/socket'
+import { ClientToServerEvents, InnerServerEvents, ServerToClientEvents, SocketData } from './services/socket'
 import * as ROOMS from './rooms'
 import * as CHAT from './chat'
 
@@ -31,7 +31,7 @@ export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerSe
 io.on('connection', socket => {
   // Connect
   console.log(`User connected: ${socket.id}`)
-  ;(socket as ExtendedSocket).name = socket.id
+  socket.data.name = socket.id
 
   // Disconnect
   socket.on('disconnect', () => {
@@ -41,8 +41,7 @@ io.on('connection', socket => {
 
   // Set socket's name
   socket.on('setName', name => {
-    ;(socket as ExtendedSocket).name = name
-    console.log((socket as ExtendedSocket).name)
+    socket.data.name = name
     const room = ROOMS.getSocketRoom(socket)
     if (room) io.to(room.id).emit('receiveUsers', room.getUsers())
   })
@@ -56,7 +55,7 @@ io.on('connection', socket => {
   // Joining Room
   socket.on('joinRoom', data => {
     if (ROOMS.joinRoom(socket, data.id, data.password)) {
-      CHAT.sendServerMessage(data.id, `${(socket as ExtendedSocket).name} has joined the game!`)
+      CHAT.sendServerMessage(data.id, `${socket.data.name} has joined the game!`)
       const room = ROOMS.getRoom(data.id)
       if (!!room?.round) socket.emit('getPainting', ROOMS.getRoom(data.id).round.lineHistory)
     }
@@ -73,7 +72,7 @@ io.on('connection', socket => {
     if (room) {
       CHAT.sendMessage(room.id, {
         msg,
-        sender: (socket as ExtendedSocket).name
+        sender: socket.data.name
       })
 
       if (room.round != null && socket.id != room.painter) {
@@ -82,7 +81,7 @@ io.on('connection', socket => {
           ROOMS.givePoints(socket)
           CHAT.sendCallback(socket, {
             self: `Congratulations! You've guessed the word!`,
-            broadcast: `${(socket as ExtendedSocket).name} guessed the word (${room.round.word}) and earned 1 point!`
+            broadcast: `${socket.data.name} guessed the word (${room.round.word}) and earned 1 point!`
           })
           room.stopRound()
         } else {

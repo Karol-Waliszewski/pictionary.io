@@ -1,5 +1,5 @@
 type Pos = { x: number; y: number }
-type Line = {
+export type Line = {
   color: string
   coords: {
     prevPos: Pos
@@ -7,13 +7,13 @@ type Line = {
   }
 }
 
-export class ROUND {
+export class Round {
   word: string
   simplified: string[]
   clock: number
   lineHistory: Line[]
 
-  constructor(word) {
+  constructor(word: string) {
     this.word = word
     this.simplified = this.splitWord(this.simplifyWord(word))
     this.clock = null

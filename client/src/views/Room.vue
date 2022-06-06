@@ -184,7 +184,7 @@ export default {
     receiveUsers_error(msg) {
       this.$swal({ title: msg, type: "error" });
     },
-    joinRoom_error(msg) {
+    joinRoomError(msg) {
       this.$swal({ title: msg, type: "error" });
       this.$router.push("/rooms");
     },

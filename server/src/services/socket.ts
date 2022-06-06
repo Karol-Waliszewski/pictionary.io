@@ -1,9 +1,6 @@
-import { Socket } from 'socket.io'
+import { Socket } from 'socket.io';
 import { Room, RoomOptions } from 'src/room'
-
-export type ExtendedSocket = Socket & {
-  name: string
-}
+import { Line } from 'src/round'
 
 export type Message = { msg: string; sender: string }
 
@@ -26,6 +23,9 @@ export type ServerToClientEvents = {
   receiveServerMessage: (message: string) => void
   receiveCallback: (message: string) => void
   anotherDeviceConnected: (message: string) => void
+  createRoomError: (message: string) => void
+  joinRoomError: (message: string) => void
+  roomCreated: (id: string) => void
 }
 
 // events received from a client
@@ -41,7 +41,7 @@ export type ClientToServerEvents = {
   leaveRoom: () => void
   getRooms: () => void
   sendMessage: (msg: string) => void
-  paint: (line: string) => void
+  paint: (line: Line) => void
   clear: () => void
   wordChosen: (word: string) => void
 }
@@ -53,6 +53,7 @@ export type InnerServerEvents = {
 
 // data type that can be passed through event
 export type SocketData = {
-  data: string
   name: string
 }
+
+export type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>

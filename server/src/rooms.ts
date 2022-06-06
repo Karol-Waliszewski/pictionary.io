@@ -1,11 +1,11 @@
 import { genId } from './utils/id'
 import { io } from './index'
+import { Room, RoomOptions } from './room'
+import { TypedSocket } from './services/socket'
 
-import { Room as ROOM } from './room'
+var ROOMS: Record<string, Room> = {}
 
-var ROOMS: Record<string, ROOM> = {}
-
-export const createRoom = (socket, options) => {
+export const createRoom = (socket: TypedSocket, options: RoomOptions) => {
   if (typeof options.name === 'undefined' || !options.name.length) {
     socket.emit('createRoomError', 'You have to set a name!')
     return false
@@ -14,7 +14,7 @@ export const createRoom = (socket, options) => {
   leaveRoom(socket)
 
   const roomId = genId()
-  const room = new ROOM({
+  const room = new Room({
     id: roomId,
     name: options.name,
     isPrivate: options.isPrivate || false,
@@ -28,10 +28,10 @@ export const createRoom = (socket, options) => {
   })
 
   ROOMS[roomId] = room
-  socket.name = 'Host'
+  socket.data.name = 'Host'
   room.addUser(socket)
   socket.join(roomId)
-  socket.emit('room_created', roomId)
+  socket.emit('roomCreated', roomId)
   updateRooms()
 
   room.initRound()
@@ -40,7 +40,7 @@ export const createRoom = (socket, options) => {
 }
 
 export const getRooms = () => {
-  const rooms: ROOM[] = []
+  const rooms: Room[] = []
   for (let room in ROOMS) {
     rooms.push(
       Object.assign(ROOMS[room], {
@@ -55,12 +55,12 @@ export const updateRooms = () => io.emit('receiveRooms', getRooms())
 
 export const getRoom = (roomId: string) => ROOMS[roomId]
 
-export const joinRoom = (socket, id, password) => {
+export const joinRoom = (socket: TypedSocket, id: Room['id'], password: Room['password']) => {
   let room = ROOMS[id]
   let flag = true
 
   if (typeof room == 'undefined') {
-    socket.emit('joinRoom_error', "This room doesn't exist")
+    socket.emit('joinRoomError', "This room doesn't exist")
     return false
   }
 
@@ -82,7 +82,7 @@ export const joinRoom = (socket, id, password) => {
 
   if (!flag) {
     //console.error(msg);
-    socket.emit('joinRoom_error', msg)
+    socket.emit('joinRoomError', msg)
     return false
   }
 
@@ -94,7 +94,7 @@ export const joinRoom = (socket, id, password) => {
   return true
 }
 
-export const leaveRoom = socket => {
+export const leaveRoom = (socket: TypedSocket) => {
   const rooms = getRooms()
   if (!rooms.length) return false
 
@@ -112,8 +112,7 @@ export const leaveRoom = socket => {
   return true
 }
 
-export const getSocketRoom = socket => {
-  console.log(getRooms())
+export const getSocketRoom = (socket: TypedSocket) => {
   for (let room of getRooms()) {
     for (let user of room.users) {
       if (user == socket.id) {
@@ -125,7 +124,7 @@ export const getSocketRoom = socket => {
   return null
 }
 
-export const givePoints = socket => {
+export const givePoints = (socket: TypedSocket) => {
   const room = getSocketRoom(socket)
   if (room) room.givePoints(socket)
 }

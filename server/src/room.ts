@@ -2,13 +2,8 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import { io } from '.'
 import * as CHAT from './chat'
-import { ROUND } from './round'
-
-type User = {
-  id: string
-  points: number
-  name: string
-}
+import { Round } from './round'
+import { TypedSocket } from './services/socket'
 
 export type RoomOptions = {
   id: string
@@ -16,7 +11,7 @@ export type RoomOptions = {
   isPrivate?: boolean
   password?: string
   maxUsers?: number
-  users?: User[]
+  users?: string[]
   roundTime?: number
   wordTime?: number
   points?: Record<string, number>
@@ -35,9 +30,9 @@ export class Room {
   wordTime: RoomOptions['wordTime']
   points?: RoomOptions['points']
 
-  painter: any
+  painter: string | null
   created: boolean
-  round: any
+  round: Round
 
   constructor(options: RoomOptions) {
     this.id = options.id
@@ -87,7 +82,7 @@ export class Room {
     }, 1000)
   }
 
-  countDown(time) {
+  countDown(time: number) {
     io.to(this.id).emit('countdown', time)
     const interval = setInterval(() => {
       if (time <= 0) {
@@ -103,9 +98,9 @@ export class Room {
     }, 1000)
   }
 
-  startRound(word) {
+  startRound(word: string) {
     if (this.users.length > 1) {
-      this.round = new ROUND(word)
+      this.round = new Round(word)
       io.to(this.id).emit('roundStarted')
       io.to(this.painter).emit('receivePassword', word)
       CHAT.sendServerMessage(this.id, `Round started!`)
@@ -135,7 +130,7 @@ export class Room {
   setPainter() {
     if (!this.users.length) return false
 
-    let newPainter
+    let newPainter: string
     do {
       newPainter = this.queue.pop()
       this.queue.unshift(newPainter)
@@ -164,14 +159,14 @@ export class Room {
     this.updateUsers()
   }
 
-  removeUser({ id, name }) {
+  removeUser({ id, data }: TypedSocket) {
     this.users.splice(this.users.indexOf(id), 1)
     this.queue.splice(this.queue.indexOf(id), 1)
 
     // If user who left was a painter, replace him.
     if (this.painter == id) {
       this.stopRound()
-      CHAT.sendServerMessage(this.id, `Painter (${name}) left the game, choosing another painter...`)
+      CHAT.sendServerMessage(this.id, `Painter (${data.name}) left the game, choosing another painter...`)
     }
 
     this.updateUsers()
@@ -190,12 +185,11 @@ export class Room {
   }
 
   getUsers() {
-    return this.users.map((user: any) => {
-      console.log(io.sockets.sockets[user]?.name, 'name')
+    return this.users.map(userID => {
       return {
-        id: user as string,
-        points: this.points[user] || 0,
-        name: io.sockets.sockets[user]?.name || user
+        id: userID,
+        points: this.points[userID] || 0,
+        name: io.sockets.sockets.get(userID)?.data.name || userID
       }
     })
   }

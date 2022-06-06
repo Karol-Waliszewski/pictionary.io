@@ -35,7 +35,7 @@ export default {
     },
   },
   sockets: {
-    room_created(id) {
+    roomCreated(id) {
       this.$router.push({ name: "room", params: { id: id } });
     },
   },
