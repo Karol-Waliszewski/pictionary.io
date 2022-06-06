@@ -4,8 +4,7 @@
             <div class="content">
                 <p>
                     Created by
-                    <a href="https://github.com/Karol-Waliszewski">Karol Waliszewski</a> 👨‍💻
-                    and <a href="https://github.com/kabugh">Jakub Tkaczyk</a> 👨‍💻
+                    <a href="https://github.com/Karol-Waliszewski" target="_blank">Karol Waliszewski</a> 👨‍💻 and <a href="#">Jakub Tkaczyk</a> 👨‍💻
                 </p>
             </div>
         </div>
