@@ -19,9 +19,11 @@ httpServer.listen(PORT, () => {
   console.log(`Backend is running on port: ${PORT}`)
 })
 
+console.log('Client url: ' + CLIENT_URL)
+
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
   cors: {
-    origin: [CLIENT_URL || '*'],
+    origin: [CLIENT_URL ?? '*'],
     methods: ['GET', 'POST'],
     credentials: true
   },
