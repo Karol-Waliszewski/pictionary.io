@@ -13,7 +13,7 @@ const httpServer = createServer(app)
 
 console.log('Client url: ' + CLIENT_URL)
 
-// app.use(cors({ origin: CLIENT_URL ?? '*' }))
+app.use(cors({ origin: CLIENT_URL ?? '*:*' }))
 app.use(express.json())
 
 // app.listen wont work as it creates a new server
@@ -22,11 +22,11 @@ httpServer.listen(PORT, () => {
 })
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
-  cors: {
-    origin: [CLIENT_URL ?? '*'],
-    methods: ['GET', 'POST'],
-    credentials: true
-  },
+  // cors: {
+  //   origin: CLIENT_URL ?? '*:*',
+  //   methods: ['GET', 'POST'],
+  //   credentials: true
+  // },
   allowEIO3: true
 })
 
