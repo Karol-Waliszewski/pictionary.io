@@ -13,14 +13,13 @@ const httpServer = createServer(app)
 
 console.log('Client url: ' + CLIENT_URL)
 
-// app.listen wont work as it creates a new server
 httpServer.listen(PORT, () => {
   console.log(`Backend is running on port: ${PORT}`)
 })
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
   cors: {
-    origin: '*:*',
+    origin: [CLIENT_URL, 'puns.netlify.app'],
     methods: ['GET', 'POST'],
     credentials: true
   },
