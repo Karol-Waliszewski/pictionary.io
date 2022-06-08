@@ -9,6 +9,9 @@ import * as CHAT from './chat'
 const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:8080'
 const PORT = process.env.PORT ?? 3000
 const app = express()
+app.use(cors({ origin: [CLIENT_URL ?? '*', 'puns.netlify.app'] }))
+app.use(express.json())
+
 const httpServer = createServer(app)
 
 console.log('Client url: ' + CLIENT_URL)
