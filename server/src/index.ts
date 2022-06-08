@@ -11,15 +11,15 @@ const PORT = process.env.PORT ?? 3000
 const app = express()
 const httpServer = createServer(app)
 
-app.use(cors({ origin: '*' }))
+console.log('Client url: ' + CLIENT_URL)
+
+app.use(cors({ origin: CLIENT_URL ?? '*' }))
 app.use(express.json())
 
 // app.listen wont work as it creates a new server
 httpServer.listen(PORT, () => {
   console.log(`Backend is running on port: ${PORT}`)
 })
-
-console.log('Client url: ' + CLIENT_URL)
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
   cors: {
