@@ -4,7 +4,6 @@ import { Auth0AppState, Auth0Plugin } from './services/auth/auth0-plugin'
 import VueSweetAlert from 'vue-sweetalert2'
 import { router } from './router'
 import App from './App.vue'
-import Colors from './styles/variables.scss'
 import './registerServiceWorker'
 import './styles/index.scss'
 
@@ -25,8 +24,8 @@ Vue.use(Auth0Plugin, {
 })
 
 Vue.use(VueSweetAlert, {
-  confirmButtonColor: Colors.primary,
-  cancelButtonColor: Colors.light
+  confirmButtonColor: '#e58e26',
+  cancelButtonColor: '#f5f5f5'
 })
 
 new Vue({
