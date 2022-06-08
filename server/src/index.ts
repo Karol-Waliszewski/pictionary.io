@@ -22,11 +22,11 @@ httpServer.listen(PORT, () => {
 })
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
-  // cors: {
-  //   origin: [CLIENT_URL ?? '*'],
-  //   methods: ['GET', 'POST'],
-  //   credentials: true
-  // },
+  cors: {
+    origin: [CLIENT_URL ?? '*'],
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
   allowEIO3: true
 })
 
