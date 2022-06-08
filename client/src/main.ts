@@ -11,25 +11,25 @@ import './styles/index.scss'
 Vue.config.productionTip = false
 
 Vue.use(
-    new VueSocketIO({
-        debug: false,
-        // connection: 'https://charadesio.herokuapp.com/'
-        connection: 'http://localhost:3000'
-    })
+  new VueSocketIO({
+    debug: false,
+    // connection: 'https://charadesio.herokuapp.com/'
+    connection: process.env.NODE_ENV === 'production' ? 'https://puns-web.herokuapp.com/' : 'http://localhost:3000'
+  })
 )
 
 Vue.use(Auth0Plugin, {
-    domain: process.env.VUE_APP_AUTH0_DOMAIN,
-    clientId: process.env.VUE_APP_AUTH0_CLIENT_ID,
-    onRedirectCallback: (appState: Auth0AppState) => router.push(appState?.targetUrl ? appState.targetUrl : window.location.pathname)
+  domain: process.env.VUE_APP_AUTH0_DOMAIN,
+  clientId: process.env.VUE_APP_AUTH0_CLIENT_ID,
+  onRedirectCallback: (appState: Auth0AppState) => router.push(appState?.targetUrl ? appState.targetUrl : window.location.pathname)
 })
 
 Vue.use(VueSweetAlert, {
-    confirmButtonColor: Colors.primary,
-    cancelButtonColor: Colors.light
+  confirmButtonColor: Colors.primary,
+  cancelButtonColor: Colors.light
 })
 
 new Vue({
-    router,
-    render: h => h(App)
+  router,
+  render: h => h(App)
 }).$mount('#app')
