@@ -13,7 +13,7 @@ Vue.use(
   new VueSocketIO({
     debug: false,
     // connection: 'https://charadesio.herokuapp.com/'
-    connection: process.env.NODE_ENV === 'production' ? 'https://puns-web.herokuapp.com/' : 'http://localhost:3000'
+    connection: process.env.NODE_ENV === 'production' ? 'https://cors-anywhere.herokuapp.com/https://puns-web.herokuapp.com/' : 'http://localhost:3000'
   })
 )
 
