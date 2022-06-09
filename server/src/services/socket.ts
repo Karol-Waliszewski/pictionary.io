@@ -30,10 +30,6 @@ export type ServerToClientEvents = {
 
 // events received from a client
 export type ClientToServerEvents = {
-  init: (message: string) => void
-  userAvailable: (userId: string) => void
-  updateWatched: (assets: string[], userId: string) => void
-  updatePrivacyMode: (privacyStatus: boolean, userId: string) => void
   setName: (name: string) => void
   createRoom: (options: RoomOptions) => void
   getRoom: (id: string) => void
