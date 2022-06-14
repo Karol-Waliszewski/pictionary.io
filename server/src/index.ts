@@ -6,13 +6,15 @@ import { ClientToServerEvents, InnerServerEvents, ServerToClientEvents, SocketDa
 import * as ROOMS from './rooms'
 import * as CHAT from './chat'
 
-const CLIENT_URL = '*'
+const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:8080'
 const PORT = process.env.PORT ?? 3000
 const app = express()
-app.use(cors({ origin: [CLIENT_URL] }))
+app.use(cors({ origin: [CLIENT_URL ?? '*', 'https://puns.netlify.app'] }))
 app.use(express.json())
 
 const httpServer = createServer(app)
+
+console.log('Client url: ' + CLIENT_URL)
 
 httpServer.prependListener('request', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -24,7 +26,7 @@ httpServer.listen(PORT, () => {
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
   cors: {
-    origin: [CLIENT_URL],
+    origin: [CLIENT_URL, 'https://puns.netlify.app'],
     methods: ['GET', 'POST'],
     credentials: true
   },
