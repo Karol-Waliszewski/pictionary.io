@@ -16,13 +16,17 @@ const httpServer = createServer(app)
 
 console.log('Client url: ' + CLIENT_URL)
 
+httpServer.prependListener('request', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+})
+
 httpServer.listen(PORT, () => {
   console.log(`Backend is running on port: ${PORT}`)
 })
 
 export const io = new Server<ClientToServerEvents, ServerToClientEvents, InnerServerEvents, SocketData>(httpServer, {
   cors: {
-    origin: [CLIENT_URL, 'puns.netlify.app'],
+    origin: [CLIENT_URL, 'https://puns.netlify.app'],
     methods: ['GET', 'POST'],
     credentials: true
   },
