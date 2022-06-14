@@ -6,7 +6,7 @@ import { ClientToServerEvents, InnerServerEvents, ServerToClientEvents, SocketDa
 import * as ROOMS from './rooms'
 import * as CHAT from './chat'
 
-const CLIENT_URL = process.env.CLIENT_URL ?? 'https://puns.netlify.app'
+const CLIENT_URL = process.env.CLIENT_URL ?? 'https://puns.netlify.app/'
 const PORT = process.env.PORT ?? 3000
 const app = express()
 app.use(cors({ origin: [CLIENT_URL] }))
