@@ -14,9 +14,9 @@ app.use(express.json())
 
 const httpServer = createServer(app)
 
-// httpServer.prependListener('request', (_, res) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*')
-// })
+httpServer.prependListener('request', (_, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+})
 
 httpServer.listen(PORT, () => {
   console.log(`Backend is running on port: ${PORT}`)
