@@ -33,6 +33,7 @@ export const createRoom = (socket: TypedSocket, options: RoomOptions) => {
   socket.join(roomId)
   socket.emit('roomCreated', roomId)
   updateRooms()
+  console.log('Room created: ' + roomId)
 
   room.initRound()
 

@@ -54,8 +54,22 @@ export class Room {
   }
 
   async getWord() {
-    const html = await axios.get('http://www.kalambury.org/lib/generate.php')
-    const word = cheerio.load(html.data.trim())('div').text().trim()
+    // const html = await axios.get('http://www.kalambury.org/lib/generate.php')
+    // const word = cheerio.load(html.data.trim())('div').text().trim()
+    const response = await axios.post<{ serverMemo: { data: { temp_data: string[] } } }>('https://webp.pl/livewire/message/frontend.tools.random-word-generator', {
+      fingerprint: { id: 'Z02tICOW0A6mhTa0sfPO', name: 'frontend.tools.random-word-generator', locale: 'pl', path: 'generator-losowych-slow', method: 'GET', v: 'acj' },
+      serverMemo: {
+        children: [],
+        errors: [],
+        htmlHash: '7f34eccd',
+        data: { word_type: 'nouns', number: '1', data: [], temp_data: ['ruchome piaski'] },
+        dataMeta: [],
+        checksum: '6ed808b0cac58f72c80bbca6e9b9c9370b4004868a1ab4676fcb8dfbaa79d6a7'
+      },
+      updates: [{ type: 'callMethod', payload: { id: 'vfeu', method: 'onRandomWordGenerator', params: [] } }]
+    })
+
+    const word = response.data.serverMemo.data.temp_data[0]
     return word
   }
 
